@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-bg: #0a1931;
+  --color-dark-secondary: #1a3d63;
+  --color-dark-accent: #4a7fa7;
+  --color-dark-text: #b3cfe5;
+  
+  --color-light-bg: #f6fafd;
+  --color-light-accent: #4a7fa7;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply transition-colors duration-300;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-md border border-white/10 bg-white/5;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-md border border-white/5 bg-black/20;
+  }
+
+  .water-flow {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .water-flow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: 0.5s;
+  }
+
+  .water-flow:hover::after {
+    left: 100%;
+  }
+
+  .mesh-gradient {
+    background-color: #0a1931;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(210, 100%, 20%, 1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(220, 100%, 15%, 1) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(200, 100%, 25%, 1) 0, transparent 50%);
+  }
+
+  .mesh-gradient-light {
+    background-color: #f6fafd;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(210, 100%, 95%, 1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(220, 100%, 90%, 1) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(200, 100%, 95%, 1) 0, transparent 50%);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@keyframes wave {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+.animate-wave {
+  animation: wave 2s infinite linear;
+}
+
