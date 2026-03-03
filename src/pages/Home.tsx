@@ -44,7 +44,7 @@ export function Home() {
             <WaterButton>Explore Directory</WaterButton>
           </Link>
           <Link to="/submit">
-            <WaterButton variant="secondary">Launch Your Tool</WaterButton>
+            <WaterButton variant="secondary">Add Category</WaterButton>
           </Link>
         </div>
       </Section>
