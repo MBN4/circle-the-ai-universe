@@ -5,10 +5,12 @@ import { WaterButton } from '../components/WaterButton';
 import { Section } from '../components/Section';
 import { GlassCard } from '../components/GlassCard';
 import { FAQAccordion } from '../components/FAQAccordion';
-import { AI_TOOLS, FAQS } from '../data';
-import { Link } from 'react-router-dom';
+import { AI_TOOLS, FAQS, CATEGORIES } from '../data';
+import { Link, useNavigate } from 'react-router-dom';
+import { cn } from '../lib/utils';
 
 export function Home() {
+  const navigate = useNavigate();
   const featuredTools = AI_TOOLS.slice(0, 3);
 
   return (
@@ -24,28 +26,29 @@ export function Home() {
           <Sparkles className="w-4 h-4 text-dark-accent" />
           <span>Discover the future of AI</span>
         </motion.div>
-        
+
         <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 dark:text-white">
           The Center of the <br />
           <span className="bg-gradient-to-r from-dark-accent to-blue-400 bg-clip-text text-transparent">
             AI Universe
           </span>
         </h1>
-        
+
         <p className="max-w-2xl mx-auto text-gray-500 dark:text-gray-400 text-lg mb-10">
-          Circle is the premier destination to discover, explore, and submit 
+          Circle is the premier destination to discover, explore, and submit
           the world's most innovative artificial intelligence tools.
         </p>
-        
+
         <div className="flex flex-wrap justify-center gap-4">
           <Link to="/directory">
             <WaterButton>Explore Directory</WaterButton>
           </Link>
           <Link to="/submit">
-            <WaterButton variant="secondary">Submit Your AI</WaterButton>
+            <WaterButton variant="secondary">Launch Your Tool</WaterButton>
           </Link>
         </div>
       </Section>
+
 
       {/* Featured Section */}
       <Section className="max-w-6xl mx-auto mb-32">
@@ -54,9 +57,7 @@ export function Home() {
             <h2 className="text-3xl font-bold dark:text-white mb-2">Featured Tools</h2>
             <p className="text-gray-500 dark:text-gray-400">Hand-picked innovations from our community.</p>
           </div>
-          <Link to="/directory" className="text-dark-accent flex items-center gap-1 hover:gap-2 transition-all font-medium">
-            View All <ArrowRight className="w-4 h-4" />
-          </Link>
+
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -74,9 +75,9 @@ export function Home() {
                   <span className="text-xs font-medium px-3 py-1 rounded-full glass dark:glass-dark dark:text-dark-text">
                     {tool.category}
                   </span>
-                  <a 
-                    href={tool.url} 
-                    target="_blank" 
+                  <a
+                    href={tool.url}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-dark-accent text-sm font-semibold hover:underline"
                   >
@@ -86,6 +87,26 @@ export function Home() {
               </GlassCard>
             </div>
           ))}
+        </div>
+
+        <div className="flex justify-center mt-12">
+          <Link to="/directory">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="group relative flex items-center gap-3 px-8 py-4 rounded-2xl bg-dark-accent text-white font-bold text-lg shadow-xl shadow-dark-accent/20 hover:shadow-dark-accent/40 transition-all overflow-hidden"
+            >
+              <span className="relative z-10">Explore All Tools</span>
+              <motion.div
+                animate={{ x: [0, 5, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                className="relative z-10"
+              >
+                <ArrowRight className="w-5 h-5" />
+              </motion.div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            </motion.button>
+          </Link>
         </div>
       </Section>
 

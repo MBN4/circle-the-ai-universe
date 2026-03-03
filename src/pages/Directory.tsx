@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Search, ExternalLink, Zap, Code, Image, Video, PenTool, Globe, Layout, Mic, Search as SearchIcon,
@@ -24,8 +25,19 @@ const ICON_MAP: Record<string, any> = {
 };
 
 export function Directory() {
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialCategory = searchParams.get('category') || 'All';
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category');
+    if (categoryFromUrl && CATEGORIES.includes(categoryFromUrl)) {
+      setActiveCategory(categoryFromUrl);
+    } else if (categoryFromUrl === 'All' || !categoryFromUrl) {
+      setActiveCategory('All');
+    }
+  }, [searchParams]);
 
   const filteredTools = useMemo(() => {
     return AI_TOOLS.filter(tool => {
@@ -38,7 +50,14 @@ export function Directory() {
   }, [activeCategory, searchQuery]);
 
   const handleCategoryClick = (cat: string) => {
-    setActiveCategory(prev => prev === cat ? 'All' : cat);
+    const nextCategory = activeCategory === cat ? 'All' : cat;
+
+    if (nextCategory === 'All') {
+      searchParams.delete('category');
+    } else {
+      searchParams.set('category', nextCategory);
+    }
+    setSearchParams(searchParams);
   };
 
   return (

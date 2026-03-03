@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Circle, Twitter, Github, Linkedin } from 'lucide-react';
+import { Circle, Instagram, Linkedin } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -12,22 +12,19 @@ export function Footer() {
             <span className="font-bold text-xl tracking-tighter dark:text-white">CIRCLE</span>
           </Link>
           <p className="text-gray-500 dark:text-gray-400 max-w-sm mb-8">
-            The premier directory for discovering and submitting the world's most 
+            The premier directory for discovering and submitting the world's most
             advanced artificial intelligence tools. Join the universe.
           </p>
           <div className="flex gap-4">
             <a href="#" className="p-2 rounded-full glass dark:glass-dark hover:text-dark-accent transition-colors">
-              <Twitter className="w-5 h-5" />
-            </a>
-            <a href="#" className="p-2 rounded-full glass dark:glass-dark hover:text-dark-accent transition-colors">
-              <Github className="w-5 h-5" />
+              <Instagram className="w-5 h-5" />
             </a>
             <a href="#" className="p-2 rounded-full glass dark:glass-dark hover:text-dark-accent transition-colors">
               <Linkedin className="w-5 h-5" />
             </a>
           </div>
         </div>
-        
+
         <div>
           <h4 className="font-bold dark:text-white mb-6">Platform</h4>
           <ul className="space-y-4 text-sm text-gray-500 dark:text-gray-400">
@@ -48,7 +45,7 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      
+
       <div className="max-w-6xl mx-auto pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
         <p>© 2026 Circle AI Universe. All rights reserved.</p>
         <p>Built with passion for the AI community.</p>
