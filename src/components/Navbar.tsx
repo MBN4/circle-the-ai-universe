@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'motion/react';
+import { motion, useScroll, useMotionValueEvent } from 'motion/react';
 import { Circle } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { cn } from '../lib/utils';
+import { useState } from 'react';
 
 const NAV_LINKS = [
   { name: 'Home', path: '/' },
@@ -15,9 +16,28 @@ const NAV_LINKS = [
 export function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
+  const [hidden, setHidden] = useState(false);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    if (latest > previous && latest > 150) {
+      setHidden(true);
+    } else {
+      setHidden(false);
+    }
+  });
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4">
+    <motion.nav
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: "-100%" },
+      }}
+      animate={hidden ? "hidden" : "visible"}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center p-4"
+    >
       <div className="w-full max-w-5xl glass dark:glass-dark rounded-full px-6 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 group">
           <Circle className="w-6 h-6 text-dark-accent group-hover:rotate-180 transition-transform duration-500" />
@@ -46,6 +66,6 @@ export function Navbar() {
         </div>
 
       </div>
-    </nav>
+    </motion.nav>
   );
 }
