@@ -5,6 +5,7 @@ export interface AITool {
   category: string;
   url: string;
   desc: string;
+  eli5Desc?: string;
   icon: string;
   pricingType: "Free" | "Freemium" | "Paid" | "Open Source";
   hasApi: boolean;
@@ -16,11 +17,46 @@ export interface AITool {
   alternatives?: number[];
 }
 
+export interface AIWorkflow {
+  id: string;
+  title: string;
+  description: string;
+  isProOnly: boolean;
+  timeSaved: string;
+  steps: {
+    step: number;
+    action: string;
+    toolName: string;
+    toolId: number;
+    category: string;
+  }[];
+}
+
+export interface AIDeal {
+  id: string;
+  toolName: string;
+  discount: string;
+  description: string;
+  code: string;
+  isProOnly: boolean;
+  expiry: string;
+  url: string;
+}
+
+export interface ModelStatus {
+  name: string;
+  provider: string;
+  status: "Operational" | "Degraded" | "Outage";
+  latencyMs: number;
+  uptime90d: string;
+  lastIncident: string;
+}
+
 export const SITE_CONFIG = {
   name: "Circle",
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://circletheai.com",
-  title: "Circle - The AI Universe Directory",
-  description: "Discover, explore, compare, and submit the world's most innovative Artificial Intelligence tools.",
+  title: "Circle - The AI Universe Directory & Workflows",
+  description: "Discover, explore, compare, and connect multi-tool AI workflows with real-time benchmarks and verified ratings.",
 };
 
 export const CATEGORIES = [
@@ -32,744 +68,277 @@ export const CATEGORIES = [
 export const PRICING_TYPES = ["All", "Free", "Freemium", "Paid", "Open Source"];
 
 export const AI_TOOLS: AITool[] = [
+  { id: 1, slug: "adobe-firefly", name: "Adobe Firefly", category: "Design", url: "https://firefly.adobe.com", desc: "Generative AI for creative workflows, integrated into Adobe Creative Cloud.", eli5Desc: "A magic paintbrush that creates art and fills in missing parts of photos.", icon: "Palette", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 342, prompts: ["Photorealistic portrait of a robotic astronaut in neon cyberpunk lighting, 8k", "Vector illustration of a smart city skyline at sunset, flat art"], pros: ["Direct integration with Photoshop and Illustrator", "Commercially safe generated assets"], cons: ["Generative credits limit free usage", "Watermark on free tier"], alternatives: [2, 4, 55] },
+  { id: 2, slug: "midjourney", name: "Midjourney", category: "Design", url: "https://midjourney.com", desc: "Advanced AI image generation known for its artistic and realistic styles.", eli5Desc: "Type any sentence, and it draws an ultra-realistic picture or artwork.", icon: "Image", pricingType: "Paid", hasApi: false, rating: 4.9, upvotes: 890, prompts: ["Cinematic macro shot of an iridescent crystal butterfly --v 6.0 --ar 16:9", "Hyper-detailed architectural concept of an eco skyscraper --stylize 250"], pros: ["Unmatched artistic quality and realism", "Active global community and daily inspiration"], cons: ["No official API", "No permanently free tier"], alternatives: [1, 4, 53] },
+  { id: 3, slug: "canva-magic-design", name: "Canva Magic Design", category: "Design", url: "https://canva.com", desc: "AI-powered tool that generates customized templates and designs instantly.", eli5Desc: "Instant graphic designer that builds social media posts and slides in seconds.", icon: "Layout", pricingType: "Freemium", hasApi: true, rating: 4.7, upvotes: 512, pros: ["Extremely intuitive for non-designers", "Massive asset and font library"], cons: ["Limited customization compared to pro design suites"], alternatives: [1, 5, 7] },
+  { id: 4, slug: "dall-e-3", name: "DALL-E 3", category: "Design", url: "https://openai.com/dall-e-3", desc: "OpenAI's state-of-the-art text-to-image generator with precise prompt following.", eli5Desc: "ChatGPT's built-in artist that turns words into clear illustrations and logos.", icon: "Zap", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 670, prompts: ["A vintage diner menu board that clearly says 'COFFEE $2' in retro neon letters"], pros: ["Superior text rendering inside images", "Natural prompt understanding via ChatGPT"], cons: ["Strict safety filtering"], alternatives: [2, 53, 56] },
+  { id: 5, slug: "looka", name: "Looka", category: "Design", url: "https://looka.com", desc: "AI-driven platform for logo design and full brand identity creation.", eli5Desc: "Makes complete business logos and brand kits in two clicks.", icon: "Target", pricingType: "Paid", hasApi: false, rating: 4.5, upvotes: 210, pros: ["Generates full brand kits and business cards", "Instant vector downloads"], cons: ["One-off payment needed to download vector files"], alternatives: [1, 3, 7] },
+  { id: 6, slug: "uizard", name: "Uizard", category: "Design", url: "https://uizard.io", desc: "Sketch-to-prototype UI designer that uses AI to speed up product design.", eli5Desc: "Draws an app interface from your hand-drawn notebook sketches.", icon: "PenTool", pricingType: "Freemium", hasApi: false, rating: 4.6, upvotes: 380, pros: ["Convert hand-drawn sketches to UI screens", "Fast clickable prototype generation"], cons: ["Limited export options for clean production code"], alternatives: [8, 14, 20] },
+  { id: 7, slug: "designs-ai", name: "Designs.ai", category: "Design", url: "https://designs.ai", desc: "All-in-one suite for generating logos, videos, banners, and mockups.", eli5Desc: "One-stop shop for making banners, logos, and promo videos.", icon: "Layout", pricingType: "Paid", hasApi: false, rating: 4.4, upvotes: 195, pros: ["Multi-format creative generation", "Centralized asset manager"], cons: ["Higher subscription pricing for individual creators"], alternatives: [1, 3, 5] },
+  { id: 8, slug: "figma-ai", name: "Figma AI", category: "Design", url: "https://figma.com", desc: "AI features that automate design tasks and help build prototypes faster.", eli5Desc: "Smart assistant inside Figma that arranges buttons and designs pages.", icon: "Layers", pricingType: "Freemium", hasApi: true, rating: 4.9, upvotes: 780, pros: ["Industry-standard design workflow", "Automated layer renaming and prototyping"], cons: ["Requires Figma proficiency"], alternatives: [6, 14] },
+  { id: 9, slug: "runway", name: "Runway", category: "Design", url: "https://runwayml.com", desc: "A creative toolkit for generating images, videos, and artistic assets.", eli5Desc: "A digital movie studio that creates realistic video clips from text.", icon: "Video", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 620, pros: ["Gen-2 & Gen-3 cutting-edge video models", "Camera motion brush and depth controls"], cons: ["High credit consumption for video rendering"], alternatives: [21, 27, 28] },
+  { id: 10, slug: "khroma", name: "Khroma", category: "Design", url: "https://khroma.co", desc: "AI color tool for designers that learns your preferences to create palettes.", eli5Desc: "Learns your favorite colors and builds beautiful matching themes.", icon: "Palette", pricingType: "Free", hasApi: false, rating: 4.6, upvotes: 310, pros: ["Completely free to use", "Generates typography and poster color mockups"], cons: ["Focused solely on color generation"], alternatives: [1, 5] },
+
+  { id: 11, slug: "wix-adi", name: "Wix ADI", category: "Web Builders", url: "https://wix.com", desc: "Artificial Design Intelligence that builds a unique website in minutes.", eli5Desc: "Builds a complete business website by asking you a few questions.", icon: "Globe", pricingType: "Freemium", hasApi: false, rating: 4.5, upvotes: 290, pros: ["Complete hosting and domain integration", "Rich eCommerce extensions"], cons: ["Platform lock-in"], alternatives: [12, 13, 14] },
+  { id: 12, slug: "hostinger-ai", name: "Hostinger AI", category: "Web Builders", url: "https://hostinger.com", desc: "Drag-and-drop builder with AI tools for content, logos, and heatmaps.", eli5Desc: "Fast website builder that writes articles and creates logos automatically.", icon: "Layout", pricingType: "Paid", hasApi: false, rating: 4.6, upvotes: 240, pros: ["Affordable bundled hosting", "Built-in AI SEO and copywriter"], cons: ["No permanent free tier"], alternatives: [11, 13, 15] },
+  { id: 13, slug: "durable", name: "Durable", category: "Web Builders", url: "https://durable.co", desc: "AI website builder for solo entrepreneurs that creates a site in 30 seconds.", eli5Desc: "Makes a full business website, invoice system, and map in 30 seconds.", icon: "Zap", pricingType: "Freemium", hasApi: false, rating: 4.7, upvotes: 410, pros: ["Rapid website setup under 1 minute", "Built-in invoicing and simple CRM"], cons: ["Limited granular design customizability"], alternatives: [11, 14, 19] },
+  { id: 14, slug: "framer-ai", name: "Framer AI", category: "Web Builders", url: "https://framer.com", desc: "Generate responsive, fluidly animated landing pages and sites from a single prompt.", eli5Desc: "Type what your website is about, and it builds and launches it online.", icon: "Layout", pricingType: "Freemium", hasApi: false, rating: 4.9, upvotes: 750, pros: ["Top-tier animations and visual quality", "Direct domain publishing with fast CDN"], cons: ["Steeper learning curve for complex interactive logic"], alternatives: [8, 13, 20] },
+  { id: 15, slug: "10web", name: "10Web", category: "Web Builders", url: "https://10web.io", desc: "AI-powered WordPress platform for automated website building and hosting.", eli5Desc: "Automatically builds and speeds up WordPress websites.", icon: "Cloud", pricingType: "Paid", hasApi: false, rating: 4.5, upvotes: 215, pros: ["Full WordPress ecosystem compatibility", "90+ Google PageSpeed optimization"], cons: ["Requires WordPress architecture familiarity"], alternatives: [11, 18] },
+  { id: 16, slug: "site123", name: "SITE123", category: "Web Builders", url: "https://site123.com", desc: "Simple and intuitive website builder with AI-assisted design and layout.", eli5Desc: "Super easy tool to make basic websites without any technical knowledge.", icon: "Globe", pricingType: "Freemium", hasApi: false, rating: 4.3, upvotes: 160, pros: ["Extremely simple setup", "Mobile responsive out of the box"], cons: ["Rigid layout customization"], alternatives: [11, 13] },
+  { id: 17, slug: "appy-pie", name: "Appy Pie", category: "Web Builders", url: "https://appypie.com", desc: "No-code AI platform for building websites, apps, and chatbots.", eli5Desc: "Lets anyone build phone apps and websites without coding.", icon: "Smartphone", pricingType: "Freemium", hasApi: true, rating: 4.4, upvotes: 275, pros: ["Multi-platform web and mobile build", "Pre-built business workflow connectors"], cons: ["App store export requires paid plan"], alternatives: [13, 14] },
+  { id: 18, slug: "elementor-ai", name: "Elementor AI", category: "Web Builders", url: "https://elementor.com", desc: "AI-driven content and code generation for WordPress website building.", eli5Desc: "Writes text and code right inside the WordPress design screen.", icon: "Code", pricingType: "Paid", hasApi: false, rating: 4.6, upvotes: 330, pros: ["Generates custom CSS code directly in editor", "Native WordPress integration"], cons: ["Requires Elementor Pro license"], alternatives: [15, 14] },
+  { id: 19, slug: "squarespace-ai", name: "Squarespace AI", category: "Web Builders", url: "https://squarespace.com", desc: "Smart templates and copy generation to help you launch faster.", eli5Desc: "Creates stylish templates and writes your store descriptions.", icon: "Layout", pricingType: "Paid", hasApi: false, rating: 4.7, upvotes: 360, pros: ["Award-winning template aesthetics", "Built-in email marketing and analytics"], cons: ["No free tier available"], alternatives: [11, 14] },
+  { id: 20, slug: "dora-ai", name: "Dora AI", category: "Web Builders", url: "https://dora.run", desc: "Generate 3D animated websites from text prompts using AI.", eli5Desc: "Builds futuristic 3D websites that spin and move when you scroll.", icon: "Box", pricingType: "Freemium", hasApi: false, rating: 4.8, upvotes: 490, pros: ["Native 3D models and scroll-driven animations", "Next-generation spatial UI feel"], cons: ["Heavy resource load on older client devices"], alternatives: [14, 6] },
+
+  { id: 21, slug: "descript", name: "Descript", category: "Video", url: "https://descript.com", desc: "AI-powered video editor that makes editing as easy as editing text.", eli5Desc: "Delete words from a text document and it cuts those moments from your video.", icon: "Video", pricingType: "Freemium", hasApi: false, rating: 4.8, upvotes: 560, pros: ["Automatic filler word removal", "AI voice clone overdubbing"], cons: ["Desktop app can be resource intensive"], alternatives: [24, 26, 29] },
+  { id: 22, slug: "synthesia", name: "Synthesia", category: "Video", url: "https://synthesia.io", desc: "Create professional AI avatar videos from text in minutes.", eli5Desc: "Digital human actors that speak your words in any language.", icon: "Users", pricingType: "Paid", hasApi: true, rating: 4.7, upvotes: 480, pros: ["150+ diverse photorealistic avatars", "Multi-language voice synchronization"], cons: ["No free plan for continuous usage"], alternatives: [23, 29, 30] },
+  { id: 23, slug: "heygen", name: "HeyGen", category: "Video", url: "https://heygen.com", desc: "AI video generation for marketing, sales, and training using avatars.", eli5Desc: "Translates your videos into other languages matching your exact lips.", icon: "UserCircle", pricingType: "Freemium", hasApi: true, rating: 4.9, upvotes: 720, pros: ["Flawless lip-sync video translation", "Custom avatar creation from 2-minute video"], cons: ["Credit limits on free tier"], alternatives: [22, 29] },
+  { id: 24, slug: "pictory", name: "Pictory", category: "Video", url: "https://pictory.ai", desc: "Automatically create short, highly shareable branded videos from long-form content.", eli5Desc: "Turns long YouTube videos and podcasts into short TikTok clips.", icon: "Scissors", pricingType: "Paid", hasApi: false, rating: 4.6, upvotes: 310, pros: ["Quick turnaround for TikTok/Reels creation", "Auto caption generation"], cons: ["Stock footage suggestions can occasionally be generic"], alternatives: [21, 25, 26] },
+  { id: 25, slug: "lumen5", name: "Lumen5", category: "Video", url: "https://lumen5.com", desc: "AI video creator that turns blog posts and articles into engaging videos.", eli5Desc: "Paste a news article and it makes a video summary with pictures and music.", icon: "Zap", pricingType: "Freemium", hasApi: false, rating: 4.5, upvotes: 270, pros: ["Auto-summarizes text into video storyboard", "Vast stock library"], cons: ["720p output limitation on free plan"], alternatives: [24, 29, 30] },
+  { id: 26, slug: "kapwing", name: "Kapwing", category: "Video", url: "https://kapwing.com", desc: "Online video editor with AI tools for subtitles, background removal, and more.", eli5Desc: "Fast online video editor that adds subtitles and erases backgrounds.", icon: "Film", pricingType: "Freemium", hasApi: false, rating: 4.7, upvotes: 415, pros: ["Collaborative browser-based workflow", "Auto-smart cut and subtitle translator"], cons: ["Free export includes small watermark"], alternatives: [21, 24] },
+  { id: 27, slug: "pika-labs", name: "Pika Labs", category: "Video", url: "https://pika.art", desc: "Text-to-video generator for creating animations and cinematic effects.", eli5Desc: "Type an idea and it turns it into a short moving movie clip.", icon: "Sparkles", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 540, pros: ["Precise area modification with Lip Sync", "Fast generation speeds"], cons: ["Short clip durations per generation"], alternatives: [9, 28] },
+  { id: 28, slug: "kaiber", name: "Kaiber", category: "Video", url: "https://kaiber.ai", desc: "AI creative engine for generating videos based on your own photos and music.", eli5Desc: "Makes trippy and artistic music videos that dance to your song.", icon: "Music", pricingType: "Paid", hasApi: false, rating: 4.6, upvotes: 350, pros: ["Audio-reactive animation features", "Distinct visual styles for music videos"], cons: ["No free plan"], alternatives: [9, 27] },
+  { id: 29, slug: "fliki", name: "Fliki", category: "Video", url: "https://fliki.ai", desc: "Turn text into videos with realistic AI voices in minutes.", eli5Desc: "Converts written text into full narrated videos with background music.", icon: "Mic", pricingType: "Freemium", hasApi: true, rating: 4.6, upvotes: 320, pros: ["1000+ realistic voices in 75 languages", "Text-to-podcast and video capability"], cons: ["5-minute monthly free video credit"], alternatives: [22, 23, 30] },
+  { id: 30, slug: "invideo-ai", name: "InVideo AI", category: "Video", url: "https://invideo.io", desc: "A simple text-to-video tool that generates complete videos with voiceovers.", eli5Desc: "Tell it what video you want, and it writes the script and edits everything.", icon: "Video", pricingType: "Freemium", hasApi: false, rating: 4.7, upvotes: 490, pros: ["Fully automated end-to-end video production", "Voice clone capability"], cons: ["Watermarked exports on free plan"], alternatives: [24, 25, 29] },
+
+  { id: 31, slug: "jasper", name: "Jasper", category: "Copywriting", url: "https://jasper.ai", desc: "AI content platform for marketing teams to create high-quality copy.", eli5Desc: "An AI copywriter that writes blogs, ads, and emails for your business.", icon: "PenTool", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 620, pros: ["Brand voice personalization", "SEO mode integration with Surfer"], cons: ["Higher price point"], alternatives: [32, 33, 40] },
+  { id: 32, slug: "copy-ai", name: "Copy.ai", category: "Copywriting", url: "https://copy.ai", desc: "AI-powered tool for generating sales copy, blogs, and social media posts.", eli5Desc: "Generates catchy captions, marketing emails, and product descriptions.", icon: "FileText", pricingType: "Freemium", hasApi: false, rating: 4.7, upvotes: 530, pros: ["Automated multi-step marketing workflows", "Generous free tier"], cons: ["Occasional generic phrasing in basic outputs"], alternatives: [31, 33, 35] },
+  { id: 33, slug: "writesonic", name: "Writesonic", category: "Copywriting", url: "https://writesonic.com", desc: "AI writing assistant that creates SEO-optimized content and blogs.", eli5Desc: "Writes search-engine friendly articles and landing page copy in seconds.", icon: "Zap", pricingType: "Freemium", hasApi: true, rating: 4.6, upvotes: 410, pros: ["Built-in Chatsonic real-time web search", "Fast article writer 5.0"], cons: ["Credit-based word limits"], alternatives: [31, 32] },
+  { id: 34, slug: "anyword", name: "Anyword", category: "Copywriting", url: "https://anyword.com", desc: "Data-driven copywriting platform that predicts how your copy will perform.", eli5Desc: "Tells you which ad headline will get the most clicks before you post it.", icon: "BarChart", pricingType: "Paid", hasApi: true, rating: 4.6, upvotes: 280, pros: ["Predictive performance scoring", "Target audience demographic filtering"], cons: ["Expensive for solo freelancers"], alternatives: [31, 32] },
+  { id: 35, slug: "rytr", name: "Rytr", category: "Copywriting", url: "https://rytr.me", desc: "AI writing assistant that helps you create high-quality content in seconds.", eli5Desc: "Affordable and quick helper for writing emails, bios, and short stories.", icon: "Pen", pricingType: "Freemium", hasApi: true, rating: 4.5, upvotes: 350, pros: ["Very affordable paid plan", "30+ languages supported"], cons: ["Short-form content focus"], alternatives: [32, 37] },
+  { id: 36, slug: "copysmith", name: "Copysmith", category: "Copywriting", url: "https://copysmith.ai", desc: "AI content creation for eCommerce teams and agencies.", eli5Desc: "Writes hundreds of product descriptions for online stores at once.", icon: "ShoppingBag", pricingType: "Paid", hasApi: true, rating: 4.4, upvotes: 190, pros: ["Bulk catalog generation", "Shopify integration"], cons: ["Specialized mainly in eCommerce"], alternatives: [31, 33] },
+  { id: 37, slug: "wordtune", name: "Wordtune", category: "Copywriting", url: "https://wordtune.com", desc: "AI writing tool that helps you rewrite and refine your sentences.", eli5Desc: "Gives you 10 better ways to say any sentence you write.", icon: "Type", pricingType: "Freemium", hasApi: false, rating: 4.8, upvotes: 490, pros: ["Casual vs formal tone switcher", "Sentence length expansion/shortening"], cons: ["Free plan has daily rewrite limits"], alternatives: [38, 39] },
+  { id: 38, slug: "grammarly", name: "Grammarly", category: "Copywriting", url: "https://grammarly.com", desc: "AI-powered writing assistant for grammar, tone, and clarity.", eli5Desc: "A smart proofreader that fixes your spelling, grammar, and tone everywhere.", icon: "CheckCircle", pricingType: "Freemium", hasApi: false, rating: 4.9, upvotes: 890, pros: ["Works in every browser and app", "Real-time tone detector"], cons: ["Advanced stylistic rewrites require Premium"], alternatives: [37, 39] },
+  { id: 39, slug: "hemingway-ai", name: "Hemingway AI", category: "Copywriting", url: "https://hemingwayapp.com", desc: "Helps you make your writing bold and clear using AI-driven feedback.", eli5Desc: "Makes hard-to-read text simple, direct, and easy to understand.", icon: "Edit3", pricingType: "Paid", hasApi: false, rating: 4.6, upvotes: 270, pros: ["Readability score highlights", "Fixes passive voice"], cons: ["AI features require paid subscription"], alternatives: [37, 38] },
+  { id: 40, slug: "claude", name: "Claude", category: "Copywriting", url: "https://claude.ai", desc: "Anthropic's AI assistant capable of long-form writing and complex reasoning.", eli5Desc: "A super-smart robot that writes naturally and understands long books.", icon: "MessageSquare", pricingType: "Freemium", hasApi: true, rating: 4.9, upvotes: 1150, pros: ["Extremely natural human writing style", "200k+ token context window"], cons: ["Usage caps during peak hours on free plan"], alternatives: [83, 101] },
+
+  { id: 41, slug: "github-copilot", name: "GitHub Copilot", category: "Coding", url: "https://github.com/features/copilot", desc: "Your AI pair programmer that suggests code and entire functions.", eli5Desc: "Guesses and types the next lines of code for programmers automatically.", icon: "Code", pricingType: "Paid", hasApi: false, rating: 4.9, upvotes: 950, pros: ["Seamless VS Code, JetBrains integration", "High accuracy on standard patterns"], cons: ["Monthly subscription fee"], alternatives: [42, 43, 48] },
+  { id: 42, slug: "cursor", name: "Cursor", category: "Coding", url: "https://cursor.com", desc: "The AI-first code editor built for pair programming with an LLM.", eli5Desc: "A smart coding app that writes and fixes computer programs for you.", icon: "Code", pricingType: "Freemium", hasApi: false, rating: 5.0, upvotes: 1180, pros: ["Full codebase understanding and indexing", "Multi-file generation and direct terminal debug"], cons: ["Requires switching from default VS Code install"], alternatives: [41, 46, 48] },
+  { id: 43, slug: "tabnine", name: "Tabnine", category: "Coding", url: "https://tabnine.com", desc: "AI assistant for software developers that provides real-time code completions.", eli5Desc: "A private coding helper that never shares your company's code.", icon: "Terminal", pricingType: "Freemium", hasApi: false, rating: 4.6, upvotes: 360, pros: ["Runs on-premise for strict enterprise security", "Zero code data training"], cons: ["Chat capabilities are simpler than Cursor"], alternatives: [41, 48] },
+  { id: 44, slug: "amazon-q-developer", name: "Amazon Q Developer", category: "Coding", url: "https://aws.amazon.com/q/developer", desc: "AI-powered assistant for building, deploying, and operating applications on AWS.", eli5Desc: "Helps software developers build and launch servers on AWS.", icon: "Cpu", pricingType: "Freemium", hasApi: true, rating: 4.6, upvotes: 310, pros: ["Deep AWS infrastructure integration", "Code security vulnerability scans"], cons: ["Tightly focused on the AWS ecosystem"], alternatives: [41, 46] },
+  { id: 45, slug: "replit-ghostwriter", name: "Replit Ghostwriter", category: "Coding", url: "https://replit.com", desc: "AI-powered tools for writing, debugging, and explaining code in Replit.", eli5Desc: "A helper that writes and tests code right inside your web browser.", icon: "Zap", pricingType: "Paid", hasApi: false, rating: 4.7, upvotes: 430, pros: ["Zero setup in-browser development", "Instant live app deployment"], cons: ["Requires Replit Core subscription"], alternatives: [42, 48] },
+  { id: 46, slug: "sourcegraph-cody", name: "Sourcegraph Cody", category: "Coding", url: "https://sourcegraph.com/cody", desc: "AI coding assistant that understands your entire codebase.", eli5Desc: "A smart assistant that reads your entire huge code folder to answer questions.", icon: "Search", pricingType: "Freemium", hasApi: true, rating: 4.7, upvotes: 380, pros: ["Understands massive multi-repo codebases", "Multi-model support (Claude, GPT, Gemini)"], cons: ["Initial repo indexing takes time"], alternatives: [41, 42] },
+  { id: 47, slug: "blackbox-ai", name: "Blackbox AI", category: "Coding", url: "https://useblackbox.io", desc: "AI tool to search through millions of code snippets and auto-complete code.", eli5Desc: "Finds ready-made code snippets and extracts text from video tutorials.", icon: "Box", pricingType: "Freemium", hasApi: true, rating: 4.5, upvotes: 290, pros: ["Code extraction from videos and images", "Fast code search"], cons: ["Interface can feel cluttered"], alternatives: [41, 48] },
+  { id: 48, slug: "codeium", name: "Codeium", category: "Coding", url: "https://codeium.com", desc: "Free, high-quality AI coding assistant with extensions for 40+ IDEs.", eli5Desc: "A completely free coding copilot that types code suggestions for you.", icon: "Code", pricingType: "Free", hasApi: true, rating: 4.8, upvotes: 620, pros: ["Generous free tier for individual developers", "Fast autocompletions"], cons: ["Chat indexing can be slower on massive monorepos"], alternatives: [41, 42, 43] },
+  { id: 49, slug: "sourcery", name: "Sourcery", category: "Coding", url: "https://sourcery.ai", desc: "AI tool that helps you refactor and improve your Python code automatically.", eli5Desc: "Cleans up messy Python code and makes it run faster and cleaner.", icon: "Wind", pricingType: "Freemium", hasApi: false, rating: 4.6, upvotes: 240, pros: ["Instant Python code cleanup", "Automated code review in GitHub PRs"], cons: ["Primary specialization is Python"], alternatives: [41, 48] },
+  { id: 50, slug: "pieces-for-developers", name: "Pieces for Developers", category: "Coding", url: "https://pieces.app", desc: "AI-powered snippet management and workflow optimization tool.", eli5Desc: "Saves and organizes useful code snippets with AI search.", icon: "Puzzle", pricingType: "Free", hasApi: false, rating: 4.7, upvotes: 310, pros: ["On-device local AI processing", "Saves full context with code snippets"], cons: ["Separate desktop app to manage"], alternatives: [46, 48] },
+
+  { id: 51, slug: "midjourney-v6", name: "Midjourney", category: "Image Gen", url: "https://midjourney.com", desc: "Highly artistic AI image generation tool popular for creative visuals.", eli5Desc: "Draws magazine-quality photos and fantasy art from simple prompts.", icon: "Image", pricingType: "Paid", hasApi: false, rating: 4.9, upvotes: 930, pros: ["Best-in-class aesthetic quality", "Vibrant community"], cons: ["Paid only"], alternatives: [52, 53, 55] },
+  { id: 52, slug: "dall-e-3-image", name: "DALL-E 3", category: "Image Gen", url: "https://openai.com", desc: "OpenAI's latest text-to-image generator, now integrated into ChatGPT.", eli5Desc: "Creates pictures with readable words and clear styles inside ChatGPT.", icon: "Image", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 710, pros: ["Understands detailed prompts easily", "Clear typography on signs and logos"], cons: ["Strict content filtering"], alternatives: [51, 53, 56] },
+  { id: 53, slug: "stable-diffusion", name: "Stable Diffusion", category: "Image Gen", url: "https://stability.ai", desc: "Open-source image generation model that can be run locally.", eli5Desc: "Free, open art maker that runs offline on your own computer.", icon: "Wind", pricingType: "Open Source", hasApi: true, rating: 4.9, upvotes: 910, pros: ["100% open weights for local execution", "Huge custom model ecosystem"], cons: ["Requires powerful computer graphics card"], alternatives: [51, 52, 55] },
+  { id: 54, slug: "adobe-firefly-gen", name: "Adobe Firefly", category: "Image Gen", url: "https://firefly.adobe.com", desc: "Creator-focused AI tool for image editing and vector generation.", eli5Desc: "Safe art maker for businesses that builds vector illustrations.", icon: "Palette", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 420, pros: ["Commercially safe training data", "Vector SVG creation"], cons: ["Credit caps on free plan"], alternatives: [51, 52] },
+  { id: 55, slug: "leonardo-ai", name: "Leonardo.ai", category: "Image Gen", url: "https://leonardo.ai", desc: "Full-featured AI platform for character design, environments, and assets.", eli5Desc: "Great for making video game characters and 3D textures.", icon: "Sparkles", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 680, pros: ["Daily free generation tokens", "Canvas inpainting and real-time generation"], cons: ["Interface has many advanced knobs for beginners"], alternatives: [51, 53] },
+  { id: 56, slug: "ideogram", name: "Ideogram", category: "Image Gen", url: "https://ideogram.ai", desc: "AI tool that excels at generating high-quality images with readable text.", eli5Desc: "The best tool for making posters and T-shirt designs with real words.", icon: "Type", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 640, pros: ["Perfect typography on shirts, signs, and posters", "Free daily credits"], cons: ["Slightly slower generation speed on free tier"], alternatives: [52, 54] },
+  { id: 57, slug: "bluewillow", name: "BlueWillow", category: "Image Gen", url: "https://bluewillow.ai", desc: "A free alternative to Midjourney for high-quality artistic images.", eli5Desc: "Community tool for making cool avatars and digital art.", icon: "Cloud", pricingType: "Freemium", hasApi: false, rating: 4.4, upvotes: 230, pros: ["User-friendly Discord interface", "Budget-friendly"], cons: ["Quality can vary compared to Midjourney v6"], alternatives: [51, 58] },
+  { id: 58, slug: "playground-ai", name: "Playground AI", category: "Image Gen", url: "https://playgroundai.com", desc: "Easy-to-use platform for generating and editing AI images and art.", eli5Desc: "A simple digital canvas where you can create and tweak pictures.", icon: "Gamepad", pricingType: "Freemium", hasApi: false, rating: 4.7, upvotes: 480, pros: ["Generous 500 images/day free tier", "Interactive mixed canvas editor"], cons: ["Upscaling features require Pro"], alternatives: [53, 55] },
+  { id: 59, slug: "jasper-art", name: "Jasper Art", category: "Image Gen", url: "https://jasper.ai", desc: "AI art generator that turns your imagination into unique high-res images.", eli5Desc: "Builds commercial photos and illustrations for marketing blogs.", icon: "Palette", pricingType: "Paid", hasApi: false, rating: 4.5, upvotes: 260, pros: ["High resolution royalty-free outputs", "Integrated with Jasper Writer"], cons: ["Part of higher-cost Jasper package"], alternatives: [51, 54] },
+  { id: 60, slug: "nightcafe", name: "NightCafe", category: "Image Gen", url: "https://nightcafe.studio", desc: "AI art platform with daily challenges and multiple generation models.", eli5Desc: "Fun art community with daily challenges and lots of artistic filters.", icon: "Coffee", pricingType: "Freemium", hasApi: false, rating: 4.6, upvotes: 390, pros: ["Multiple model engines in one app (SD, DALL-E)", "Fun community challenges"], cons: ["Credit system for HD renders"], alternatives: [55, 58] },
+
+  { id: 61, slug: "elevenlabs", name: "ElevenLabs", category: "Audio", url: "https://elevenlabs.io", desc: "Lifelike text-to-speech and voice cloning for creators and brands.", eli5Desc: "Reads out text in realistic human voices with natural emotion.", icon: "Mic", pricingType: "Freemium", hasApi: true, rating: 4.9, upvotes: 840, pros: ["Indistinguishable from real human speech", "Voice cloning in 29 languages"], cons: ["Audio generation credits on free tier"], alternatives: [62, 66] },
+  { id: 62, slug: "murf-ai", name: "Murf AI", category: "Audio", url: "https://murf.ai", desc: "AI voice generator for creating high-quality professional voiceovers.", eli5Desc: "Creates studio-quality voiceovers for presentations and ads.", icon: "Volume2", pricingType: "Freemium", hasApi: true, rating: 4.7, upvotes: 460, pros: ["Pitch and speed fine-tuning", "Sync voice directly with video slides"], cons: ["Free plan doesn't allow voice downloads"], alternatives: [61, 66] },
+  { id: 63, slug: "soundraw", name: "Soundraw", category: "Audio", url: "https://soundraw.io", desc: "AI music generator for creators that allows you to customize royalty-free music.", eli5Desc: "Composes custom background music where you choose the mood and tempo.", icon: "Music", pricingType: "Freemium", hasApi: false, rating: 4.6, upvotes: 380, pros: ["Full royalty-free music rights", "Customizable song intro, drop, and outro"], cons: ["Unlimited downloads require subscription"], alternatives: [67, 68, 70] },
+  { id: 64, slug: "krisp", name: "Krisp", category: "Audio", url: "https://krisp.ai", desc: "AI tool that removes background noise and echoes from your calls.", eli5Desc: "Mutes dogs barking and keyboard clicks on your Zoom calls.", icon: "Shield", pricingType: "Freemium", hasApi: false, rating: 4.9, upvotes: 720, pros: ["Real-time bi-directional noise removal", "AI meeting summaries"], cons: ["Free plan has daily 60-minute limit"], alternatives: [65] },
+  { id: 65, slug: "otter-ai", name: "Otter.ai", category: "Audio", url: "https://otter.ai", desc: "AI transcription and meeting notes that capture every word.", eli5Desc: "Joins your meetings and writes down notes and action items for you.", icon: "FileText", pricingType: "Freemium", hasApi: false, rating: 4.8, upvotes: 680, pros: ["Live real-time meeting transcription", "Automatic slide capture"], cons: ["300 free monthly transcription minutes"], alternatives: [64, 88] },
+  { id: 66, slug: "lovo-ai", name: "Lovo.ai", category: "Audio", url: "https://lovo.ai", desc: "AI voice and content creation platform with high-quality TTS.", eli5Desc: "Voice generator with 500+ voices with different emotions.", icon: "Mic", pricingType: "Freemium", hasApi: true, rating: 4.6, upvotes: 340, pros: ["Granular emotional tone settings", "Built-in video editor"], cons: ["Watermark on free video exports"], alternatives: [61, 62] },
+  { id: 67, slug: "mubert", name: "Mubert", category: "Audio", url: "https://mubert.com", desc: "AI-generated royalty-free music tailored for streamers and video makers.", eli5Desc: "Endless streams of background electronic and chill music for videos.", icon: "Radio", pricingType: "Freemium", hasApi: true, rating: 4.5, upvotes: 290, pros: ["Instant track generation by genre or mood", "Streaming safe"], cons: ["Attribution required on free tier"], alternatives: [63, 68] },
+  { id: 68, slug: "suno-ai", name: "Suno AI", category: "Audio", url: "https://suno.com", desc: "Generate complete songs with lyrics and vocals from a text prompt.", eli5Desc: "Makes a real complete pop, rock, or rap song with singing in 10 seconds.", icon: "Music", pricingType: "Freemium", hasApi: false, rating: 5.0, upvotes: 1240, pros: ["Full songs with vocals, chords, and instruments", "Incredible musical variety"], cons: ["Commercial usage requires Pro subscription"], alternatives: [63, 70] },
+  { id: 69, slug: "voice-ai", name: "Voice.ai", category: "Audio", url: "https://voice.ai", desc: "Real-time AI voice changer with a library of thousands of voices.", eli5Desc: "Changes your speaking voice in real-time on Discord or gaming.", icon: "UserCircle", pricingType: "Free", hasApi: false, rating: 4.5, upvotes: 410, pros: ["Thousands of community voices", "Live gaming voice changer"], cons: ["Requires decent desktop computer to run locally"], alternatives: [61] },
+  { id: 70, slug: "aiva", name: "AIVA", category: "Audio", url: "https://aiva.ai", desc: "AI music composer that creates soundtracks for films and games.", eli5Desc: "Composes cinematic orchestra and soundtrack music for games.", icon: "Music", pricingType: "Freemium", hasApi: true, rating: 4.7, upvotes: 370, pros: ["Full MIDI file download and editing", "Deep musical theory structures"], cons: ["Free tracks require copyright credit to AIVA"], alternatives: [63, 68] },
+
+  { id: 71, slug: "hubspot-ai", name: "HubSpot AI", category: "Marketing", url: "https://hubspot.com", desc: "AI-powered CRM and marketing tools to scale your business growth.", eli5Desc: "Automates your sales emails, customer chats, and marketing campaigns.", icon: "BarChart", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 590, pros: ["Deep CRM connection", "Automated email drafting"], cons: ["Advanced enterprise tiers are costly"], alternatives: [72, 74] },
+  { id: 72, slug: "mailchimp-ai", name: "Mailchimp AI", category: "Marketing", url: "https://mailchimp.com", desc: "Smart email recommendations and content generation for marketers.", eli5Desc: "Writes sales emails and tells you the best time to send them.", icon: "Mail", pricingType: "Freemium", hasApi: true, rating: 4.6, upvotes: 420, pros: ["Audience segmentation insights", "Subject line conversion optimizer"], cons: ["Tier limits on contact list size"], alternatives: [71, 80] },
+  { id: 73, slug: "surfer-seo", name: "Surfer SEO", category: "Marketing", url: "https://surferseo.com", desc: "AI SEO tool that analyzes SERPs to help you optimize your content.", eli5Desc: "Tells you the exact keywords to write to get to page 1 on Google.", icon: "LineChart", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 680, pros: ["Real-time content score guidelines", "Keyword clustering tool"], cons: ["No permanent free tier"], alternatives: [31, 33] },
+  { id: 74, slug: "jasper-marketing", name: "Jasper", category: "Marketing", url: "https://jasper.ai", desc: "Collaborative AI platform for creating marketing campaigns at scale.", eli5Desc: "Team workspace for writing full multi-channel ad campaigns.", icon: "Users", pricingType: "Paid", hasApi: true, rating: 4.7, upvotes: 490, pros: ["Maintains company brand voice guidelines", "Chrome browser extension"], cons: ["Subscription model"], alternatives: [31, 79] },
+  { id: 75, slug: "lately-ai", name: "Lately.ai", category: "Marketing", url: "https://lately.ai", desc: "AI that turns long-form content into months of social media posts.", eli5Desc: "Chops up one long podcast or blog into 50 social media posts.", icon: "Share2", pricingType: "Paid", hasApi: false, rating: 4.5, upvotes: 260, pros: ["Learns what words get the most engagement", "Social auto-scheduler"], cons: ["Priced for business teams"], alternatives: [78, 79] },
+  { id: 76, slug: "brandwatch", name: "Brandwatch", category: "Marketing", url: "https://brandwatch.com", desc: "AI consumer intelligence platform for brand monitoring and trends.", eli5Desc: "Listens to what people across the internet are saying about your brand.", icon: "Target", pricingType: "Paid", hasApi: true, rating: 4.6, upvotes: 310, pros: ["Massive social media listening database", "Real-time crisis alert warnings"], cons: ["Enterprise pricing only"], alternatives: [71, 74] },
+  { id: 77, slug: "adcreative-ai", name: "AdCreative.ai", category: "Marketing", url: "https://adcreative.ai", desc: "Generate conversion-focused ad creatives and social posts in seconds.", eli5Desc: "Makes hundreds of Facebook and Google ads with high click rates.", icon: "Zap", pricingType: "Paid", hasApi: true, rating: 4.7, upvotes: 520, pros: ["Conversion score predictions", "Direct integration with Google & Meta ads"], cons: ["Paid credits required to download designs"], alternatives: [3, 7] },
+  { id: 78, slug: "ocoya", name: "Ocoya", category: "Marketing", url: "https://ocoya.com", desc: "AI platform for creating and scheduling social media content.", eli5Desc: "Designs graphics, writes captions, and schedules your social posts.", icon: "Calendar", pricingType: "Paid", hasApi: false, rating: 4.5, upvotes: 290, pros: ["Combines Canva-like editor with scheduling", "E-commerce store product sync"], cons: ["No free plan"], alternatives: [3, 75] },
+  { id: 79, slug: "simplified", name: "Simplified", category: "Marketing", url: "https://simplified.com", desc: "Design, write, and publish marketing content with one AI tool.", eli5Desc: "All-in-one app for graphic design, video clips, and copy.", icon: "Layout", pricingType: "Freemium", hasApi: true, rating: 4.6, upvotes: 370, pros: ["Very comprehensive free plan", "Team collaboration workflows"], cons: ["Can feel overwhelming with so many sub-tools"], alternatives: [3, 32] },
+  { id: 80, slug: "phrasee", name: "Phrasee", category: "Marketing", url: "https://phrasee.co", desc: "AI platform that generates high-performing marketing copy for email and SMS.", eli5Desc: "Writes email subject lines that get more people to open them.", icon: "MessageCircle", pricingType: "Paid", hasApi: true, rating: 4.6, upvotes: 220, pros: ["Proven increase in email open rates", "Language optimization algorithms"], cons: ["Enterprise sales model"], alternatives: [34, 72] },
+
+  { id: 81, slug: "notion-ai", name: "Notion AI", category: "Productivity", url: "https://notion.so", desc: "Connected AI assistant integrated directly into your workspace.", eli5Desc: "A smart assistant inside your notes that summarizes docs and fills tables.", icon: "FileText", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 720, pros: ["Understands context across all your workspace notes", "Automatic table autofill and summary"], cons: ["Add-on subscription cost on top of Notion plans"], alternatives: [83, 85, 90] },
+  { id: 82, slug: "motion", name: "Motion", category: "Productivity", url: "https://usemotion.com", desc: "AI-powered calendar and task manager that prioritizes your day.", eli5Desc: "An automatic calendar that rearranges your daily tasks when meetings change.", icon: "Calendar", pricingType: "Paid", hasApi: false, rating: 4.8, upvotes: 560, pros: ["Automatic schedule rebuilding when tasks run late", "Combines project management and calendar"], cons: ["Premium subscription price"], alternatives: [85, 89] },
+  { id: 83, slug: "chatgpt", name: "ChatGPT", category: "Productivity", url: "https://chatgpt.com", desc: "Versatile conversational AI assistant for brainstorming, coding, analysis, and custom GPTs.", eli5Desc: "A super-smart robot helper you can talk to about anything.", icon: "MessageSquare", pricingType: "Freemium", hasApi: true, rating: 4.9, upvotes: 1420, pros: ["Voice mode and vision analysis", "Custom GPTs and Python code interpreter"], cons: ["Usage caps on latest reasoning models during peak hours"], alternatives: [40, 101] },
+  { id: 84, slug: "tome", name: "Tome", category: "Productivity", url: "https://tome.app", desc: "AI storytelling tool for creating professional presentations and decks.", eli5Desc: "Builds full slide decks and presentations from a single prompt.", icon: "Layout", pricingType: "Freemium", hasApi: false, rating: 4.7, upvotes: 490, pros: ["Generates full slide outlines and AI graphics", "Clean mobile-friendly viewer format"], cons: ["Exporting to standard PowerPoint can alter styling"], alternatives: [3, 85] },
+  { id: 85, slug: "taskade", name: "Taskade", category: "Productivity", url: "https://taskade.com", desc: "AI productivity platform for notes, tasks, and team collaboration.", eli5Desc: "Collaborative to-do list with AI agents that help you get work done.", icon: "CheckSquare", pricingType: "Freemium", hasApi: true, rating: 4.7, upvotes: 430, pros: ["Custom autonomous AI agents", "Mind map, kanban, and list views"], cons: ["Notifications can be frequent"], alternatives: [81, 82] },
+  { id: 86, slug: "hyperwrite", name: "HyperWrite", category: "Productivity", url: "https://hyperwriteai.com", desc: "AI assistant that helps you write emails, documents, and research.", eli5Desc: "Helps you type emails faster by predicting your full sentences.", icon: "Pen", pricingType: "Freemium", hasApi: true, rating: 4.6, upvotes: 320, pros: ["Autonomous personal assistant extension", "Fast autocomplete across the web"], cons: ["Credit system on free plan"], alternatives: [38, 83] },
+  { id: 87, slug: "superhuman-ai", name: "Superhuman AI", category: "Productivity", url: "https://superhuman.com", desc: "Fastest email experience with AI for triaging and summarizing.", eli5Desc: "Super fast email app that writes replies in your personal style.", icon: "Mail", pricingType: "Paid", hasApi: false, rating: 4.9, upvotes: 680, pros: ["Instant email one-line summaries", "Split inbox zero workflow"], cons: ["Premium email subscription"], alternatives: [72, 86] },
+  { id: 88, slug: "fireflies-ai", name: "Fireflies.ai", category: "Productivity", url: "https://fireflies.ai", desc: "AI voice assistant that records and transcribes meetings with insights.", eli5Desc: "Records your Zoom calls, writes summaries, and lists next action steps.", icon: "Mic", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 540, pros: ["Integrates with Google Meet, Zoom, and Teams", "Searchable speaker soundbites"], cons: ["Limited storage on free tier"], alternatives: [65, 81] },
+  { id: 89, slug: "sunsama", name: "Sunsama", category: "Productivity", url: "https://sunsama.com", desc: "Mindful daily planner with integrations to help focus on what matters.", eli5Desc: "A calm daily planner that pulls tasks from Trello, Jira, and email.", icon: "Zap", pricingType: "Paid", hasApi: false, rating: 4.8, upvotes: 460, pros: ["Prevents workday burnout", "Deep integration with Jira, GitHub, and Notion"], cons: ["No permanently free tier"], alternatives: [82, 85] },
+  { id: 90, slug: "mem-ai", name: "Mem", category: "Productivity", url: "https://mem.ai", desc: "Self-organizing workspace that uses AI to organize your notes.", eli5Desc: "Note-taking app that automatically links and organizes related notes.", icon: "Brain", pricingType: "Freemium", hasApi: true, rating: 4.6, upvotes: 380, pros: ["No manual folder organizing needed", "Smart AI search connects old notes"], cons: ["Requires trusting AI grouping algorithms"], alternatives: [81, 83] },
+
+  { id: 91, slug: "tableau", name: "Tableau", category: "Data", url: "https://tableau.com", desc: "Visual analytics platform with AI-driven insights and data storytelling.", eli5Desc: "Turns complicated company spreadsheets into interactive charts.", icon: "BarChart", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 530, pros: ["Enterprise-standard data visualization", "Ask Data natural language queries"], cons: ["Steep learning curve"], alternatives: [92, 100] },
+  { id: 92, slug: "power-bi", name: "Power BI", category: "Data", url: "https://powerbi.microsoft.com", desc: "Microsoft's business analytics tool with AI for data visualizations.", eli5Desc: "Microsoft's dashboard tool with Copilot to explain your data.", icon: "PieChart", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 590, pros: ["Deep Microsoft 365 and Excel integration", "Copilot AI summary generation"], cons: ["Complex data modeling for beginners"], alternatives: [91, 98] },
+  { id: 93, slug: "datarobot", name: "DataRobot", category: "Data", url: "https://datarobot.com", desc: "AI platform that helps organizations build and deploy machine learning models.", eli5Desc: "Builds and launches machine learning models automatically.", icon: "Database", pricingType: "Paid", hasApi: true, rating: 4.7, upvotes: 340, pros: ["Automated machine learning (AutoML)", "Enterprise governance & monitoring"], cons: ["Enterprise contract pricing"], alternatives: [95, 97] },
+  { id: 94, slug: "monkeylearn", name: "MonkeyLearn", category: "Data", url: "https://monkeylearn.com", desc: "AI platform for text analysis and data visualization of customer feedback.", eli5Desc: "Reads customer reviews and tells you if people are happy or upset.", icon: "Search", pricingType: "Paid", hasApi: true, rating: 4.5, upvotes: 260, pros: ["Customer sentiment analysis", "No coding needed to train text classifiers"], cons: ["Expensive for small startups"], alternatives: [96, 99] },
+  { id: 95, slug: "akkio", name: "Akkio", category: "Data", url: "https://akkio.com", desc: "No-code AI for data analysis, forecasting, and lead scoring.", eli5Desc: "Connects to your sales spreadsheets to predict future revenue.", icon: "LineChart", pricingType: "Paid", hasApi: true, rating: 4.7, upvotes: 380, pros: ["Generative BI chat for datasets", "Predicts sales churn in minutes"], cons: ["Monthly data row limits"], alternatives: [93, 97] },
+  { id: 96, slug: "polly", name: "Polly", category: "Data", url: "https://polly.ai", desc: "AI-powered survey and data collection tool for team insights.", eli5Desc: "Sends quick polls and surveys in Slack and Teams.", icon: "BarChart2", pricingType: "Freemium", hasApi: true, rating: 4.5, upvotes: 290, pros: ["Instant engagement in Slack/Teams", "Automated survey summaries"], cons: ["Basic analytics on free plan"], alternatives: [94, 99] },
+  { id: 97, slug: "obviously-ai", name: "Obviously AI", category: "Data", url: "https://obviously.ai", desc: "Predictive analytics tool that builds AI models from your data in seconds.", eli5Desc: "Predicts what customers will buy without writing algorithms.", icon: "Zap", pricingType: "Paid", hasApi: true, rating: 4.6, upvotes: 310, pros: ["1-click machine learning predictions", "Clean visual explanations"], cons: ["Subscription model"], alternatives: [93, 95] },
+  { id: 98, slug: "domo", name: "Domo", category: "Data", url: "https://domo.com", desc: "Data app platform with AI capabilities for real-time business intelligence.", eli5Desc: "Connects all company databases into one live mobile dashboard.", icon: "Activity", pricingType: "Paid", hasApi: true, rating: 4.6, upvotes: 280, pros: ["1000+ pre-built cloud data connectors", "Real-time mobile business alerts"], cons: ["Enterprise deployment required"], alternatives: [91, 92] },
+  { id: 99, slug: "mixpanel-ai", name: "Mixpanel AI", category: "Data", url: "https://mixpanel.com", desc: "Product analytics with AI for tracking user behavior and retention.", eli5Desc: "Shows what buttons users click and where they drop off in your app.", icon: "UserPlus", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 620, pros: ["Spark AI natural language data queries", "Event funnel conversion charts"], cons: ["Volume-based pricing scales quickly"], alternatives: [91, 94] },
+  { id: 100, slug: "graphy", name: "Graphy", category: "Data", url: "https://graphy.app", desc: "Create beautiful, interactive charts and dashboards from your data.", eli5Desc: "Makes colorful, slick charts to share with your team.", icon: "BarChart", pricingType: "Freemium", hasApi: false, rating: 4.7, upvotes: 410, pros: ["Beautiful interactive chart styling", "Easy CSV and Notion imports"], cons: ["Not suited for massive multi-terabyte databases"], alternatives: [91, 95] },
+
+  { id: 101, slug: "perplexity-ai", name: "Perplexity AI", category: "Research", url: "https://perplexity.ai", desc: "AI search engine that provides direct answers with verified citations.", eli5Desc: "Google Search with instant, verified summaries and direct answers.", icon: "Search", pricingType: "Freemium", hasApi: true, rating: 4.9, upvotes: 980, pros: ["Verified academic and web citations for every fact", "Focus mode for Reddit, YouTube, and Papers"], cons: ["Pro search queries limited on free tier"], alternatives: [83, 102, 106] },
+  { id: 102, slug: "consensus", name: "Consensus", category: "Research", url: "https://consensus.app", desc: "AI search engine that finds answers in peer-reviewed scientific research.", eli5Desc: "Searches 200M+ real scientific papers to answer medical and science questions.", icon: "BookOpen", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 560, pros: ["Strictly scientific paper sources", "Consensus Meter shows scientific agreement %"], cons: ["Geared towards academia and scientific questions"], alternatives: [101, 103, 108] },
+  { id: 103, slug: "elicit", name: "Elicit", category: "Research", url: "https://elicit.org", desc: "AI research assistant that automates literature reviews and data extraction.", eli5Desc: "Builds research tables summarizing 100 academic papers in minutes.", icon: "FileText", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 490, pros: ["Automated paper matrix comparisons", "Extracts findings and sample sizes"], cons: ["Credit-based analysis system"], alternatives: [102, 104, 109] },
+  { id: 104, slug: "scholarcy", name: "Scholarcy", category: "Research", url: "https://scholarcy.com", desc: "AI summarizer that turns long papers and articles into bite-sized highlights.", eli5Desc: "Turns 50-page research PDF documents into 5-minute summary cards.", icon: "Book", pricingType: "Freemium", hasApi: false, rating: 4.6, upvotes: 380, pros: ["Interactive summary flashcards", "Extracts figures and reference links"], cons: ["Free browser extension has daily limits"], alternatives: [103, 105] },
+  { id: 105, slug: "chatpdf", name: "ChatPDF", category: "Research", url: "https://chatpdf.com", desc: "Interact with any PDF document to extract information and answer questions.", eli5Desc: "Upload any PDF book or manual and chat with it like a human.", icon: "FileText", pricingType: "Freemium", hasApi: true, rating: 4.8, upvotes: 790, pros: ["Fast document question answering", "Multi-language PDF translation"], cons: ["Page and file size limits on free plan"], alternatives: [101, 104] },
+  { id: 106, slug: "you-com", name: "You.com", category: "Research", url: "https://you.com", desc: "AI search engine with customizable agent behaviors for deep research.", eli5Desc: "Private search engine with AI modes for coding and deep research.", icon: "Globe", pricingType: "Freemium", hasApi: true, rating: 4.7, upvotes: 460, pros: ["Customizable research agent modes", "Live web search accuracy"], cons: ["Interface has multiple different mode tabs"], alternatives: [101, 83] },
+  { id: 107, slug: "researchgate", name: "ResearchGate", category: "Research", url: "https://researchgate.net", desc: "Professional network for scientists with AI-powered discovery and data.", eli5Desc: "Social network for scientists to share and discover new discoveries.", icon: "Network", pricingType: "Free", hasApi: false, rating: 4.6, upvotes: 330, pros: ["Access to millions of researcher papers", "Direct messaging with authors"], cons: ["Requires academic/research affiliation to post"], alternatives: [102, 108] },
+  { id: 108, slug: "semantic-scholar", name: "Semantic Scholar", category: "Research", url: "https://semanticscholar.org", desc: "AI-driven search and discovery for scientific literature.", eli5Desc: "Free academic search engine created by the Allen Institute for AI.", icon: "Search", pricingType: "Free", hasApi: true, rating: 4.8, upvotes: 520, pros: ["100% free with open API", "Influential citation tracking"], cons: ["No direct conversational chat summary interface"], alternatives: [101, 102] },
+  { id: 109, slug: "scite-ai", name: "Scite.ai", category: "Research", url: "https://scite.ai", desc: "AI citation analysis platform that helps you verify research claims.", eli5Desc: "Shows if other scientists agree with or disagree with a study's claims.", icon: "CheckCircle", pricingType: "Paid", hasApi: true, rating: 4.7, upvotes: 390, pros: ["Smart Citation analysis (Supporting vs Contrasting)", "Avoids citing retracted papers"], cons: ["Paid subscription after free trial"], alternatives: [102, 103] },
+  { id: 110, slug: "glean", name: "Glean", category: "Research", url: "https://glean.com", desc: "Enterprise AI search that connects all your company's apps and data.", eli5Desc: "A private Google Search for all your company's Slack, Docs, and Jira.", icon: "Search", pricingType: "Paid", hasApi: true, rating: 4.9, upvotes: 610, pros: ["Connects 100+ workplace SaaS tools", "Strict enterprise access permissions"], cons: ["Enterprise company deployment only"], alternatives: [101, 81] },
+
+  { id: 111, slug: "crowdstrike-falcon", name: "CrowdStrike Falcon", category: "Security", url: "https://crowdstrike.com", desc: "AI-native platform for endpoint protection and threat intelligence.", eli5Desc: "Protects computers from hackers and viruses using machine learning.", icon: "Shield", pricingType: "Paid", hasApi: true, rating: 4.9, upvotes: 580, pros: ["Industry leader in threat protection", "Real-time threat graph intelligence"], cons: ["Enterprise pricing"], alternatives: [112, 113] },
+  { id: 112, slug: "darktrace", name: "Darktrace", category: "Security", url: "https://darktrace.com", desc: "Self-learning AI that detects and responds to cyber threats in real-time.", eli5Desc: "Digital immune system that stops cyberattacks automatically.", icon: "Shield", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 490, pros: ["Autonomous cyber threat response", "Self-learning network baseline"], cons: ["Requires dedicated security team to manage"], alternatives: [111, 114] },
+  { id: 113, slug: "sentinelone", name: "SentinelOne", category: "Security", url: "https://sentinelone.com", desc: "AI-powered prevention, detection, and response across the enterprise.", eli5Desc: "Instantly rolls back ransomware attacks on business devices.", icon: "ShieldCheck", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 450, pros: ["Automated 1-click ransomware rollback", "Cloud-native agent"], cons: ["Geared for corporate IT"], alternatives: [111, 115] },
+  { id: 114, slug: "vectra-ai", name: "Vectra AI", category: "Security", url: "https://vectra.ai", desc: "Cybersecurity platform that uses AI to stop attacks in progress.", eli5Desc: "Catches sneaky hackers hiding inside business networks.", icon: "Eye", pricingType: "Paid", hasApi: true, rating: 4.7, upvotes: 310, pros: ["Reduces security alert noise by 80%", "Covers hybrid cloud attacks"], cons: ["High infrastructure integration requirements"], alternatives: [112, 113] },
+  { id: 115, slug: "check-point-ai", name: "Check Point AI", category: "Security", url: "https://checkpoint.com", desc: "AI-driven cybersecurity architecture for network and cloud protection.", eli5Desc: "A giant smart firewall that stops malicious malware downloads.", icon: "Shield", pricingType: "Paid", hasApi: true, rating: 4.7, upvotes: 340, pros: ["ThreatCloud global AI intelligence", "Comprehensive firewall integration"], cons: ["Complex configuration interface"], alternatives: [111, 117] },
+  { id: 116, slug: "tessian", name: "Tessian", category: "Security", url: "https://tessian.com", desc: "Cloud email security platform that uses AI to prevent human-error risks.", eli5Desc: "Stops you from accidentally sending sensitive emails to the wrong person.", icon: "Mail", pricingType: "Paid", hasApi: true, rating: 4.7, upvotes: 290, pros: ["Detects misaddressed emails and attachments", "Real-time spear-phishing warnings"], cons: ["Email platform specialized"], alternatives: [118, 119] },
+  { id: 117, slug: "cloudflare-ai-security", name: "Cloudflare AI Security", category: "Security", url: "https://cloudflare.com", desc: "Protects applications and APIs with AI-powered firewall and WAF.", eli5Desc: "Stops bad bots and DDoS attacks from crashing your website.", icon: "Cloud", pricingType: "Freemium", hasApi: true, rating: 4.9, upvotes: 890, pros: ["Unmatched global edge network speed", "Free basic tier for websites"], cons: ["Advanced WAF rules require Pro/Business"], alternatives: [115, 120] },
+  { id: 118, slug: "abnormal-security", name: "Abnormal Security", category: "Security", url: "https://abnormalsecurity.com", desc: "AI platform for protecting against advanced email cyberattacks.", eli5Desc: "Stops fake invoices and CEO fraud emails from reaching employee inboxes.", icon: "AlertTriangle", pricingType: "Paid", hasApi: true, rating: 4.8, upvotes: 380, pros: ["Stops account takeover and invoice fraud", "Integrates in 1 click with Microsoft 365"], cons: ["Enterprise contract required"], alternatives: [116, 119] },
+  { id: 119, slug: "ironscales", name: "Ironscales", category: "Security", url: "https://ironscales.com", desc: "AI-powered self-learning email security platform against phishing.", eli5Desc: "Trains employees and deletes phishing emails in seconds.", icon: "Shield", pricingType: "Paid", hasApi: true, rating: 4.6, upvotes: 270, pros: ["Combines AI defense with employee training", "Automated threat quarantine"], cons: ["Pricing per mailbox"], alternatives: [116, 118] },
+  { id: 120, slug: "snyk-ai", name: "Snyk AI", category: "Security", url: "https://snyk.io", desc: "Developer-first security platform with AI for finding and fixing bugs.", eli5Desc: "Scans your software code to find and auto-fix security bugs.", icon: "Code", pricingType: "Freemium", hasApi: true, rating: 4.9, upvotes: 760, pros: ["Auto-generates pull requests to fix vulnerabilities", "IDE and GitHub integrations"], cons: ["Team limits on free monthly test scans"], alternatives: [113, 117] }
+];
+
+export const AI_WORKFLOWS: AIWorkflow[] = [
   {
-    id: 1,
-    slug: "adobe-firefly",
-    name: "Adobe Firefly",
-    category: "Design",
-    url: "https://firefly.adobe.com",
-    desc: "Generative AI for creative workflows, integrated into Adobe Creative Cloud.",
-    icon: "Palette",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.8,
-    upvotes: 342,
-    prompts: [
-      "Photorealistic portrait of a robotic astronaut in neon cyberpunk lighting, 8k resolution",
-      "Vector illustration of a modern smart city skyline at sunset, minimalist flat art"
-    ],
-    pros: ["Direct integration with Photoshop and Illustrator", "Commercially safe generated assets"],
-    cons: ["Generative credits limit free usage", "Watermark on free tier downloads"],
-    alternatives: [2, 4, 55]
+    id: "wf-youtube",
+    title: "Faceless YouTube Channel Automation",
+    description: "End-to-end recipe to generate researched scripts, custom voiceovers, AI visuals, and automated video editing.",
+    isProOnly: false,
+    timeSaved: "14 hrs / video",
+    steps: [
+      { step: 1, action: "Research topic & outline", toolName: "Perplexity AI", toolId: 101, category: "Research" },
+      { step: 2, action: "Write full video script", toolName: "ChatGPT", toolId: 83, category: "Copywriting" },
+      { step: 3, action: "Generate voiceover narration", toolName: "ElevenLabs", toolId: 61, category: "Audio" },
+      { step: 4, action: "Create 4K thumbnail", toolName: "Midjourney", toolId: 2, category: "Image Gen" },
+      { step: 5, action: "Auto-edit and subtitle", toolName: "Descript", toolId: 21, category: "Video" },
+    ]
   },
   {
-    id: 2,
-    slug: "midjourney",
-    name: "Midjourney",
-    category: "Design",
-    url: "https://midjourney.com",
-    desc: "Advanced AI image generation known for its artistic, cinematic, and photorealistic styles.",
-    icon: "Image",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.9,
-    upvotes: 890,
-    prompts: [
-      "Cinematic macro shot of an iridescent crystal glass butterfly --v 6.0 --ar 16:9",
-      "Hyper-detailed architectural concept of an eco-friendly solar skyscraper, photorealistic --stylize 250"
-    ],
-    pros: ["Unmatched artistic quality and realism", "Active global community and daily inspiration"],
-    cons: ["No official API", "No permanently free tier"],
-    alternatives: [1, 4, 53]
+    id: "wf-saas-mvp",
+    title: "Weekend SaaS MVP Launch Pipeline",
+    description: "Build fullstack code, design landing pages, and launch a validated web application in 48 hours.",
+    isProOnly: false,
+    timeSaved: "80+ developer hrs",
+    steps: [
+      { step: 1, action: "Plan architecture & PRD", toolName: "ChatGPT", toolId: 83, category: "Productivity" },
+      { step: 2, action: "Generate Fullstack App Code", toolName: "Cursor", toolId: 42, category: "Coding" },
+      { step: 3, action: "Design & Publish Landing Page", toolName: "Framer AI", toolId: 14, category: "Web Builders" },
+      { step: 4, action: "Create Brand Assets & Mockups", toolName: "Adobe Firefly", toolId: 1, category: "Design" }
+    ]
   },
   {
-    id: 3,
-    slug: "canva-magic-design",
-    name: "Canva Magic Design",
-    category: "Design",
-    url: "https://canva.com",
-    desc: "AI-powered tool that generates customized templates, banners, and layouts instantly.",
-    icon: "Layout",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.7,
-    upvotes: 512,
-    prompts: [
-      "Instagram story template for a summer fashion sale with modern typography",
-      "Professional pitch deck presentation layout for an AI startup"
-    ],
-    pros: ["Extremely intuitive for non-designers", "Massive asset and font library"],
-    cons: ["Limited customization compared to pro design suites"],
-    alternatives: [1, 5, 7]
+    id: "wf-agentic-leadgen",
+    title: "Enterprise Autonomous Lead Machine (PRO)",
+    description: "Scrape, verify, enrich prospect lists, and generate personalized multi-channel outreach campaigns autonomously.",
+    isProOnly: true,
+    timeSaved: "25 hrs / week",
+    steps: [
+      { step: 1, action: "Deep market competitor intelligence", toolName: "Perplexity AI", toolId: 101, category: "Research" },
+      { step: 2, action: "Custom hyper-personalized pitch", toolName: "ChatGPT", toolId: 83, category: "Copywriting" },
+      { step: 3, action: "Automated video pitch per prospect", toolName: "HeyGen", toolId: 23, category: "Video" }
+    ]
   },
   {
-    id: 4,
-    slug: "dall-e-3",
-    name: "DALL-E 3",
-    category: "Design",
-    url: "https://openai.com/dall-e-3",
-    desc: "OpenAI's state-of-the-art text-to-image generator with precise prompt following and readable text.",
-    icon: "Zap",
-    pricingType: "Paid",
-    hasApi: true,
-    rating: 4.8,
-    upvotes: 670,
-    prompts: [
-      "A vintage diner menu board that clearly says 'COFFEE $2' in retro neon letters",
-      "An oil painting of a librarian owl sitting on a stack of ancient books"
-    ],
-    pros: ["Superior text rendering inside images", "Natural prompt understanding via ChatGPT"],
-    cons: ["Strict safety filtering", "Limited fine-tuning camera controls"],
-    alternatives: [2, 53, 56]
-  },
-  {
-    id: 5,
-    slug: "looka",
-    name: "Looka",
-    category: "Design",
-    url: "https://looka.com",
-    desc: "AI-driven platform for automated logo design and complete brand identity generation.",
-    icon: "Target",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.5,
-    upvotes: 210,
-    prompts: [
-      "Modern minimalist logo for a fintech startup named VaultAI with geometric badge"
-    ],
-    pros: ["Generates full brand kits and business cards", "Instant vector downloads"],
-    cons: ["One-off payment needed to download vector files"],
-    alternatives: [1, 3, 7]
-  },
-  {
-    id: 6,
-    slug: "uizard",
-    name: "Uizard",
-    category: "Design",
-    url: "https://uizard.io",
-    desc: "Sketch-to-prototype UI designer that uses AI to transform wireframes into interactive apps.",
-    icon: "PenTool",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.6,
-    upvotes: 380,
-    prompts: [
-      "Mobile crypto wallet interface with dark mode theme and portfolio dashboard"
-    ],
-    pros: ["Convert hand-drawn sketches to UI screens", "Fast clickable prototype generation"],
-    cons: ["Limited export options for clean production code"],
-    alternatives: [8, 14, 20]
-  },
-  {
-    id: 7,
-    slug: "designs-ai",
-    name: "Designs.ai",
-    category: "Design",
-    url: "https://designs.ai",
-    desc: "All-in-one suite for generating logos, videos, social banners, and mockups.",
-    icon: "Layout",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.4,
-    upvotes: 195,
-    pros: ["Multi-format creative generation", "Centralized asset manager"],
-    cons: ["Higher subscription pricing for individual creators"],
-    alternatives: [1, 3, 5]
-  },
-  {
-    id: 8,
-    slug: "figma-ai",
-    name: "Figma AI",
-    category: "Design",
-    url: "https://figma.com",
-    desc: "AI capabilities embedded directly into Figma to automate design layouts and component variants.",
-    icon: "Layers",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.9,
-    upvotes: 780,
-    pros: ["Industry-standard design workflow", "Automated layer renaming and prototyping"],
-    cons: ["Requires Figma proficiency"],
-    alternatives: [6, 14]
-  },
-  {
-    id: 9,
-    slug: "runway",
-    name: "Runway",
-    category: "Design",
-    url: "https://runwayml.com",
-    desc: "A multimodal AI studio for generating cinematic video clips, audio, and visual assets.",
-    icon: "Video",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.8,
-    upvotes: 620,
-    prompts: [
-      "Drone camera flyover of a futuristic neon city through heavy rain, cinematic lighting, 4k"
-    ],
-    pros: ["Gen-2 & Gen-3 cutting-edge video models", "Camera motion brush and depth controls"],
-    cons: ["High credit consumption for video rendering"],
-    alternatives: [21, 27, 28]
-  },
-  {
-    id: 10,
-    slug: "khroma",
-    name: "Khroma",
-    category: "Design",
-    url: "https://khroma.co",
-    desc: "AI color tool for designers that learns your personal aesthetic preferences to generate palettes.",
-    icon: "Palette",
-    pricingType: "Free",
-    hasApi: false,
-    rating: 4.6,
-    upvotes: 310,
-    pros: ["Completely free to use", "Generates typography and poster color mockups"],
-    cons: ["Focused solely on color generation"],
-    alternatives: [1, 5]
-  },
-  {
-    id: 11,
-    slug: "wix-adi",
-    name: "Wix ADI",
-    category: "Web Builders",
-    url: "https://wix.com",
-    desc: "Artificial Design Intelligence that builds a unique website in minutes.",
-    icon: "Globe",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.5,
-    upvotes: 290,
-    pros: ["Complete hosting and domain integration", "Rich eCommerce and booking extensions"],
-    cons: ["Platform lock-in"],
-    alternatives: [12, 13, 14]
-  },
-  {
-    id: 12,
-    slug: "hostinger-ai",
-    name: "Hostinger AI",
-    category: "Web Builders",
-    url: "https://hostinger.com",
-    desc: "Drag-and-drop builder with AI tools for content, logos, and heatmaps.",
-    icon: "Layout",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.6,
-    upvotes: 240,
-    pros: ["Affordable bundled hosting", "Built-in AI SEO and copywriter"],
-    cons: ["No permanent free tier"],
-    alternatives: [11, 13, 15]
-  },
-  {
-    id: 13,
-    slug: "durable",
-    name: "Durable",
-    category: "Web Builders",
-    url: "https://durable.co",
-    desc: "AI website builder for solo entrepreneurs that creates a site in 30 seconds.",
-    icon: "Zap",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.7,
-    upvotes: 410,
-    pros: ["Rapid website setup under 1 minute", "Built-in invoicing and simple CRM"],
-    cons: ["Limited granular design customizability"],
-    alternatives: [11, 14, 19]
-  },
-  {
-    id: 14,
-    slug: "framer-ai",
-    name: "Framer AI",
-    category: "Web Builders",
-    url: "https://framer.com",
-    desc: "Generate entire websites from a single text prompt in seconds.",
-    icon: "Layout",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.9,
-    upvotes: 750,
-    prompts: [
-      "Minimalist landing page for a SaaS AI tool with glassmorphism cards, dark mode, and pricing tables"
-    ],
-    pros: ["Top-tier animations and visual quality", "Direct domain publishing with fast CDN"],
-    cons: ["Steeper learning curve for complex interactive logic"],
-    alternatives: [8, 13, 20]
-  },
-  {
-    id: 15,
-    slug: "10web",
-    name: "10Web",
-    category: "Web Builders",
-    url: "https://10web.io",
-    desc: "AI-powered WordPress platform for automated website building and hosting.",
-    icon: "Cloud",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.5,
-    upvotes: 215,
-    pros: ["Full WordPress ecosystem compatibility", "90+ Google PageSpeed optimization"],
-    cons: ["Requires WordPress architecture familiarity"],
-    alternatives: [11, 18]
-  },
-  {
-    id: 16,
-    slug: "site123",
-    name: "SITE123",
-    category: "Web Builders",
-    url: "https://site123.com",
-    desc: "Simple and intuitive website builder with AI-assisted design and layout.",
-    icon: "Globe",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.3,
-    upvotes: 160,
-    pros: ["Extremely simple setup", "Mobile responsive out of the box"],
-    cons: ["Rigid layout customization"],
-    alternatives: [11, 13]
-  },
-  {
-    id: 17,
-    slug: "appy-pie",
-    name: "Appy Pie",
-    category: "Web Builders",
-    url: "https://appypie.com",
-    desc: "No-code AI platform for building websites, apps, and chatbots.",
-    icon: "Smartphone",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.4,
-    upvotes: 275,
-    pros: ["Multi-platform web and mobile build", "Pre-built business workflow connectors"],
-    cons: ["App store export requires paid plan"],
-    alternatives: [13, 14]
-  },
-  {
-    id: 18,
-    slug: "elementor-ai",
-    name: "Elementor AI",
-    category: "Web Builders",
-    url: "https://elementor.com",
-    desc: "AI-driven content and code generation for WordPress website building.",
-    icon: "Code",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.6,
-    upvotes: 330,
-    pros: ["Generates custom CSS code directly in editor", "Native WordPress integration"],
-    cons: ["Requires Elementor Pro license"],
-    alternatives: [15, 14]
-  },
-  {
-    id: 19,
-    slug: "squarespace-ai",
-    name: "Squarespace AI",
-    category: "Web Builders",
-    url: "https://squarespace.com",
-    desc: "Smart templates and copy generation to help you launch faster.",
-    icon: "Layout",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.7,
-    upvotes: 360,
-    pros: ["Award-winning template aesthetics", "Built-in email marketing and analytics"],
-    cons: ["No free tier available"],
-    alternatives: [11, 14]
-  },
-  {
-    id: 20,
-    slug: "dora-ai",
-    name: "Dora AI",
-    category: "Web Builders",
-    url: "https://dora.run",
-    desc: "Generate 3D animated websites from text prompts using AI.",
-    icon: "Box",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.8,
-    upvotes: 490,
-    prompts: [
-      "Landing page with interactive 3D model of a cybernetic headphone that rotates on scroll"
-    ],
-    pros: ["Native 3D models and scroll-driven animations", "Next-generation spatial UI feel"],
-    cons: ["Heavy resource load on older client devices"],
-    alternatives: [14, 6]
-  },
-  {
-    id: 21,
-    slug: "descript",
-    name: "Descript",
-    category: "Video",
-    url: "https://descript.com",
-    desc: "AI-powered video editor that makes editing as easy as editing text.",
-    icon: "Video",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.8,
-    upvotes: 560,
-    pros: ["Automatic filler word removal", "AI voice clone overdubbing"],
-    cons: ["Desktop app can be resource intensive"],
-    alternatives: [24, 26, 29]
-  },
-  {
-    id: 22,
-    slug: "synthesia",
-    name: "Synthesia",
-    category: "Video",
-    url: "https://synthesia.io",
-    desc: "Create professional AI avatar videos from text in minutes.",
-    icon: "Users",
-    pricingType: "Paid",
-    hasApi: true,
-    rating: 4.7,
-    upvotes: 480,
-    pros: ["150+ diverse photorealistic avatars", "Multi-language voice synchronization"],
-    cons: ["No free plan for continuous usage"],
-    alternatives: [23, 29, 30]
-  },
-  {
-    id: 23,
-    slug: "heygen",
-    name: "HeyGen",
-    category: "Video",
-    url: "https://heygen.com",
-    desc: "AI video generation for marketing, sales, and training using avatars.",
-    icon: "UserCircle",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.9,
-    upvotes: 720,
-    pros: ["Flawless lip-sync video translation", "Custom avatar creation from 2-minute video"],
-    cons: ["Credit limits on free tier"],
-    alternatives: [22, 29]
-  },
-  {
-    id: 24,
-    slug: "pictory",
-    name: "Pictory",
-    category: "Video",
-    url: "https://pictory.ai",
-    desc: "Automatically create short, highly shareable branded videos from long-form content.",
-    icon: "Scissors",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.6,
-    upvotes: 310,
-    pros: ["Quick turnaround for TikTok/Reels creation", "Auto caption generation"],
-    cons: ["Stock footage suggestions can occasionally be generic"],
-    alternatives: [21, 25, 26]
-  },
-  {
-    id: 25,
-    slug: "lumen5",
-    name: "Lumen5",
-    category: "Video",
-    url: "https://lumen5.com",
-    desc: "AI video creator that turns blog posts and articles into engaging videos.",
-    icon: "Zap",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.5,
-    upvotes: 270,
-    pros: ["Auto-summarizes text into video storyboard", "Vast stock library"],
-    cons: ["720p output limitation on free plan"],
-    alternatives: [24, 29, 30]
-  },
-  {
-    id: 26,
-    slug: "kapwing",
-    name: "Kapwing",
-    category: "Video",
-    url: "https://kapwing.com",
-    desc: "Online video editor with AI tools for subtitles, background removal, and more.",
-    icon: "Film",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.7,
-    upvotes: 415,
-    pros: ["Collaborative browser-based workflow", "Auto-smart cut and subtitle translator"],
-    cons: ["Free export includes small watermark"],
-    alternatives: [21, 24]
-  },
-  {
-    id: 27,
-    slug: "pika-labs",
-    name: "Pika Labs",
-    category: "Video",
-    url: "https://pika.art",
-    desc: "Text-to-video generator for creating animations and cinematic effects.",
-    icon: "Sparkles",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.8,
-    upvotes: 540,
-    prompts: [
-      "A cinematic slow motion shot of an espresso drop falling into milky foam, 4k 60fps"
-    ],
-    pros: ["Precise area modification with Lip Sync", "Fast generation speeds"],
-    cons: ["Short clip durations per generation"],
-    alternatives: [9, 28]
-  },
-  {
-    id: 28,
-    slug: "kaiber",
-    name: "Kaiber",
-    category: "Video",
-    url: "https://kaiber.ai",
-    desc: "AI creative engine for generating videos based on your own photos and music.",
-    icon: "Music",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.6,
-    upvotes: 350,
-    pros: ["Audio-reactive animation features", "Distinct visual styles for music videos"],
-    cons: ["No free plan"],
-    alternatives: [9, 27]
-  },
-  {
-    id: 29,
-    slug: "fliki",
-    name: "Fliki",
-    category: "Video",
-    url: "https://fliki.ai",
-    desc: "Turn text into videos with realistic AI voices in minutes.",
-    icon: "Mic",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.6,
-    upvotes: 320,
-    pros: ["1000+ realistic voices in 75 languages", "Text-to-podcast and video capability"],
-    cons: ["5-minute monthly free video credit"],
-    alternatives: [22, 23, 30]
-  },
-  {
-    id: 30,
-    slug: "invideo-ai",
-    name: "InVideo AI",
-    category: "Video",
-    url: "https://invideo.io",
-    desc: "A simple text-to-video tool that generates complete videos with voiceovers.",
-    icon: "Video",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 4.7,
-    upvotes: 490,
-    prompts: [
-      "Create a 60-second YouTube Short about 5 undiscovered facts about Mars with energetic narration"
-    ],
-    pros: ["Fully automated end-to-end video production", "Voice clone capability"],
-    cons: ["Watermarked exports on free plan"],
-    alternatives: [24, 25, 29]
-  },
-  {
-    id: 41,
-    slug: "github-copilot",
-    name: "GitHub Copilot",
-    category: "Coding",
-    url: "https://github.com/features/copilot",
-    desc: "AI pair programmer that provides real-time multi-line completions and chat context inside your IDE.",
-    icon: "Code",
-    pricingType: "Paid",
-    hasApi: false,
-    rating: 4.9,
-    upvotes: 950,
-    pros: ["Seamless VS Code, JetBrains, and Neovim integration", "High accuracy on standard patterns"],
-    cons: ["Monthly subscription fee"],
-    alternatives: [42, 43, 48]
-  },
-  {
-    id: 42,
-    slug: "cursor",
-    name: "Cursor",
-    category: "Coding",
-    url: "https://cursor.com",
-    desc: "The AI-native code editor built for full-repo indexing, terminal agents, and predictive edits.",
-    icon: "Code",
-    pricingType: "Freemium",
-    hasApi: false,
-    rating: 5.0,
-    upvotes: 1180,
-    pros: ["Full codebase understanding and indexing", "Multi-file generation and direct terminal debug"],
-    cons: ["Requires switching from default VS Code install"],
-    alternatives: [41, 46, 48]
-  },
-  {
-    id: 48,
-    slug: "codeium",
-    name: "Codeium",
-    category: "Coding",
-    url: "https://codeium.com",
-    desc: "Free, high-speed AI coding assistant with extensions for over 40 IDEs and enterprise support.",
-    icon: "Code",
-    pricingType: "Free",
-    hasApi: true,
-    rating: 4.8,
-    upvotes: 620,
-    pros: ["Generous free tier for individual developers", "Fast autocompletions"],
-    cons: ["Chat indexing can be slower on massive monorepos"],
-    alternatives: [41, 42, 43]
-  },
-  {
-    id: 53,
-    slug: "stable-diffusion",
-    name: "Stable Diffusion",
-    category: "Image Gen",
-    url: "https://stability.ai",
-    desc: "Open-source deep learning text-to-image model that can be run locally with zero cloud restrictions.",
-    icon: "Wind",
-    pricingType: "Open Source",
-    hasApi: true,
-    rating: 4.9,
-    upvotes: 910,
-    prompts: [
-      "masterpiece, best quality, 1girl, cyberpunk jacket, glowing visor, rain reflection, octane render"
-    ],
-    pros: ["100% open weights for local offline execution", "Endless custom LoRAs and ControlNet ecosystem"],
-    cons: ["Requires capable GPU hardware for local setups"],
-    alternatives: [2, 4, 55]
-  },
-  {
-    id: 81,
-    slug: "notion-ai",
-    name: "Notion AI",
-    category: "Productivity",
-    url: "https://notion.so",
-    desc: "Connected AI assistant integrated directly into your workspace documents, notes, and task tables.",
-    icon: "FileText",
-    pricingType: "Paid",
-    hasApi: true,
-    rating: 4.8,
-    upvotes: 720,
-    pros: ["Understands context across all your workspace notes", "Automatic table autofill and summary"],
-    cons: ["Add-on subscription cost on top of Notion plans"],
-    alternatives: [83, 85, 90]
-  },
-  {
-    id: 83,
-    slug: "chatgpt",
-    name: "ChatGPT",
-    category: "Productivity",
-    url: "https://chatgpt.com",
-    desc: "Versatile conversational AI assistant for brainstorming, coding, analysis, and custom GPTs.",
-    icon: "MessageSquare",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.9,
-    upvotes: 1420,
-    pros: ["Voice mode and vision analysis", "Custom GPTs and Python code interpreter"],
-    cons: ["Usage caps on latest reasoning models during peak hours"],
-    alternatives: [40, 101]
-  },
-  {
-    id: 101,
-    slug: "perplexity-ai",
-    name: "Perplexity AI",
-    category: "Research",
-    url: "https://perplexity.ai",
-    desc: "Conversational answer engine that searches the live web and provides real-time cited answers.",
-    icon: "Search",
-    pricingType: "Freemium",
-    hasApi: true,
-    rating: 4.9,
-    upvotes: 980,
-    pros: ["Verified academic and web citations for every fact", "Focus mode for Reddit, YouTube, and Papers"],
-    cons: ["Pro search queries limited on free tier"],
-    alternatives: [83, 102, 106]
+    id: "wf-seo-dominance",
+    title: "High-Domain Rank Content Factory (PRO)",
+    description: "Cluster target keywords, scrape SERPs, and write 100% humanized long-form articles with auto-generated featured graphics.",
+    isProOnly: true,
+    timeSaved: "30 hrs / week",
+    steps: [
+      { step: 1, action: "Analyze SERP content gaps", toolName: "Perplexity AI", toolId: 101, category: "Research" },
+      { step: 2, action: "Draft 2,500-word authoritative guide", toolName: "ChatGPT", toolId: 83, category: "Copywriting" },
+      { step: 3, action: "Render custom infographic header", toolName: "Midjourney", toolId: 2, category: "Design" }
+    ]
   }
+];
+
+export const AI_DEALS: AIDeal[] = [
+  {
+    id: "deal-1",
+    toolName: "Cursor AI",
+    discount: "20% OFF",
+    description: "Annual Developer Pro Plan discount for early Circle users.",
+    code: "CIRCLE20",
+    isProOnly: false,
+    expiry: "Active",
+    url: "https://cursor.com"
+  },
+  {
+    id: "deal-2",
+    toolName: "Perplexity Pro",
+    discount: "$10 Credit",
+    description: "Get $10 free credit toward Perplexity Pro with deep research models.",
+    code: "CIRCLEAI",
+    isProOnly: false,
+    expiry: "Active",
+    url: "https://perplexity.ai"
+  },
+  {
+    id: "deal-3",
+    toolName: "ElevenLabs Creator",
+    discount: "50% OFF Lifetime (PRO)",
+    description: "Exclusive Circle Pro member half-price discount for ultra-realistic voice cloning.",
+    code: "CIRCLE_PRO_VOICE50",
+    isProOnly: true,
+    expiry: "Verified Exclusive",
+    url: "https://elevenlabs.io"
+  },
+  {
+    id: "deal-4",
+    toolName: "Descript Video Suite",
+    discount: "40% OFF Annual (PRO)",
+    description: "Exclusive tier discount for unlimited studio sound and video transcription.",
+    code: "CIRCLE_PRO_DESCRIPT",
+    isProOnly: true,
+    expiry: "Verified Exclusive",
+    url: "https://descript.com"
+  }
+];
+
+export const MODEL_RADAR: ModelStatus[] = [
+  { name: "GPT-4o & o1 Reasoning", provider: "OpenAI", status: "Operational", latencyMs: 240, uptime90d: "99.98%", lastIncident: "None in 14d" },
+  { name: "Claude 3.7 Sonnet (Thinking)", provider: "Anthropic", status: "Operational", latencyMs: 290, uptime90d: "99.95%", lastIncident: "None in 21d" },
+  { name: "Gemini 2.0 Flash & Pro", provider: "Google DeepMind", status: "Operational", latencyMs: 180, uptime90d: "99.99%", lastIncident: "None in 30d" },
+  { name: "Midjourney v6.1 Render Engine", provider: "Midjourney Inc", status: "Operational", latencyMs: 1200, uptime90d: "99.85%", lastIncident: "Queue peak 2d ago" },
+  { name: "ElevenLabs Multilingual v2", provider: "ElevenLabs", status: "Operational", latencyMs: 310, uptime90d: "99.97%", lastIncident: "None in 18d" },
+  { name: "Stable Diffusion 3.5 Large", provider: "Stability AI", status: "Operational", latencyMs: 450, uptime90d: "99.91%", lastIncident: "None in 40d" },
 ];
 
 export const FAQS = {
   home: [
-    {
-      q: "What is Circle and what makes it unique?",
-      a: "Circle is a curated AI ecosystem directory where you can discover, benchmark, compare side-by-side, and save verified AI software with live community rankings."
-    },
-    {
-      q: "Is browsing Circle and saving tools free?",
-      a: "Yes, browsing our full catalog of 120+ AI tools, testing comparisons, and building your personal AI Stack is 100% free with no account required."
-    },
-    {
-      q: "How often is the AI directory updated?",
-      a: "Our editorial team and automated crawlers update tool profiles, verified URLs, pricing models, and public API statuses on a daily basis."
-    },
-    {
-      q: "How does the Side-by-Side Comparison feature work?",
-      a: "Navigate to the Compare tab to select any two AI tools and instantly analyze their pricing models, API availability, benchmark ratings, pros, and trade-offs."
-    },
-    {
-      q: "What is 'My AI Stack' and how do I use it?",
-      a: "Click the bookmark icon on any tool card to save it to your browser storage. You can access your personalized suite and share it via a custom link."
-    },
-    {
-      q: "Can I submit my own AI product or startup?",
-      a: "Yes! Use the Submit page to send your tool details. Our review team verifies all submissions within 24 to 48 hours."
-    }
+    { q: "What is Circle and what makes it unique?", a: "Circle is a curated AI ecosystem directory where you can discover, benchmark, compare side-by-side, and save verified AI software with live community rankings." },
+    { q: "Is browsing Circle and saving tools free?", a: "Yes, browsing our catalog of 120+ AI tools, testing comparisons, and building your personal AI Stack is 100% free with no account required." },
+    { q: "How often is the AI directory updated?", a: "Our editorial team and automated crawlers update tool profiles, verified URLs, pricing models, and public API statuses on a daily basis." },
+    { q: "How does the Side-by-Side Comparison feature work?", a: "Navigate to the Compare tab to select any two AI tools and instantly analyze their pricing models, API availability, benchmark ratings, pros, and trade-offs." },
+    { q: "What is 'My AI Stack' and how do I use it?", a: "Click the bookmark icon on any tool card to save it to your browser storage. You can access your personalized suite and share it via a custom link." },
+    { q: "Can I submit my own AI product or startup?", a: "Yes! Use the Submit page to send your tool details. Our review team verifies all submissions within 24 to 48 hours." }
   ],
   directory: [
-    {
-      q: "How do I filter AI tools by pricing or open-source status?",
-      a: "Use the filter bar below the category pills to instantly narrow down software by Free, Freemium, Paid, Open Source, or API Available."
-    },
-    {
-      q: "Can I search by keyword or specific features?",
-      a: "Yes, our real-time search bar indexes tool titles, capability tags, supported models, and full descriptions instantly."
-    },
-    {
-      q: "Are all listed external links verified and safe?",
-      a: "Every tool link is manually audited to point strictly to official developer websites and registered domains."
-    },
-    {
-      q: "How are community upvotes calculated?",
-      a: "Users can upvote tools they use and love directly from the card. Upvote scores influence the Trending leaderboard on our home page."
-    },
-    {
-      q: "How do I compare a tool I found in the directory?",
-      a: "Click the scale/balance icon on any card in the directory to automatically load that tool into our side-by-side comparison engine."
-    },
-    {
-      q: "What if a listed tool changes its pricing or features?",
-      a: "You can submit an update request on our Submit page or notify our review team to correct any listing details."
-    }
+    { q: "How do I filter AI tools by pricing or open-source status?", a: "Use the filter bar below the category pills to instantly narrow down software by Free, Freemium, Paid, Open Source, or API Available." },
+    { q: "Can I search by keyword or specific features?", a: "Yes, our real-time search bar indexes tool titles, capability tags, supported models, and full descriptions instantly." },
+    { q: "Are all listed external links verified and safe?", a: "Every tool link is manually audited to point strictly to official developer websites and registered domains." },
+    { q: "How are community upvotes calculated?", a: "Users can upvote tools they use and love directly from the card. Upvote scores influence the Trending leaderboard on our home page." },
+    { q: "How do I compare a tool I found in the directory?", a: "Click the scale/balance icon on any card in the directory to automatically load that tool into our side-by-side comparison engine." },
+    { q: "What is ELI5 Mode?", a: "Explain Like I'm 5 (ELI5) simplifies technical AI jargon into plain English descriptions for non-technical users." }
   ],
   submit: [
-    {
-      q: "What are the eligibility criteria for listing a tool?",
-      a: "Your software must be functional, leverage machine learning or generative AI, and offer clear utility to end users or developers."
-    },
-    {
-      q: "How long does the review and verification process take?",
-      a: "Standard reviews are completed within 24 to 48 business hours. You will receive an email confirmation once listed."
-    },
-    {
-      q: "Is there any fee to submit an AI tool to Circle?",
-      a: "Basic listings and category indexing are completely free. Featured placement and spotlight badges are optional."
-    },
-    {
-      q: "Can I submit open-source AI models or GitHub repositories?",
-      a: "Yes! We actively support open-source projects. Select 'Open Source' as the pricing type during your submission."
-    },
-    {
-      q: "What information should I provide for the fastest approval?",
-      a: "Provide a working demo URL, a clear 2-sentence description of the core value proposition, key pros, and public API status."
-    },
-    {
-      q: "Can I edit my tool's description or prompts after publishing?",
-      a: "Yes, reach out via email with your tool name and the requested amendments, and our team will update the live listing."
-    }
+    { q: "What are the eligibility criteria for listing a tool?", a: "Your software must be functional, leverage machine learning or generative AI, and offer clear utility to end users or developers." },
+    { q: "How long does the review and verification process take?", a: "Standard reviews are completed within 24 to 48 business hours. You will receive an email confirmation once listed." },
+    { q: "Is there any fee to submit an AI tool to Circle?", a: "Basic listings and category indexing are completely free. Featured placement and spotlight badges are optional." },
+    { q: "Can I submit open-source AI models or GitHub repositories?", a: "Yes! We actively support open-source projects. Select 'Open Source' as the pricing type during your submission." },
+    { q: "What information should I provide for the fastest approval?", a: "Provide a working demo URL, a clear 2-sentence description of the core value proposition, key pros, and public API status." },
+    { q: "Can I edit my tool's description or prompts after publishing?", a: "Yes, reach out via email with your tool name and the requested amendments, and our team will update the live listing." }
   ],
   about: [
-    {
-      q: "What is the mission behind Circle?",
-      a: "Circle was built to democratize access to the rapidly accelerating AI universe by providing transparent, searchable, and unbiased tooling data."
-    },
-    {
-      q: "What is on the upcoming product roadmap?",
-      a: "Our upcoming milestones include community review threads, verified user performance benchmarks, automated price tracking, and an AI workflow generator."
-    },
-    {
-      q: "How does Circle ensure quality over quantity in listings?",
-      a: "We test tools before approval, filtering out non-functional wrappers and prioritizing apps that provide genuine value."
-    },
-    {
-      q: "Who is behind the development of Circle?",
-      a: "Circle is built and maintained by a dedicated team of engineers, designers, and AI researchers passionate about open-access technology."
-    },
-    {
-      q: "Can organizations partner or integrate with Circle?",
-      a: "Yes, we are open to partnerships with AI labs, developer platforms, and tooling directories. Contact us for partnership inquiries."
-    },
-    {
-      q: "Is the data accessible for developers?",
-      a: "We are developing a public API to enable developers to query categorized AI tool metadata and benchmark ratings directly."
-    }
+    { q: "What is the mission behind Circle?", a: "Circle was built to democratize access to the rapidly accelerating AI universe by providing transparent, searchable, and unbiased tooling data." },
+    { q: "What is on the upcoming product roadmap?", a: "Our upcoming milestones include community review threads, verified user performance benchmarks, automated price tracking, and an AI workflow generator." },
+    { q: "How does Circle ensure quality over quantity in listings?", a: "We test tools before approval, filtering out non-functional wrappers and prioritizing apps that provide genuine value." },
+    { q: "Who is behind the development of Circle?", a: "Circle is built and maintained by a dedicated team of engineers, designers, and AI researchers passionate about open-access technology." },
+    { q: "Can organizations partner or integrate with Circle?", a: "Yes, we are open to partnerships with AI labs, developer platforms, and tooling directories. Contact us for partnership inquiries." },
+    { q: "What is included in the Circle Pro Pass?", a: "Circle Pro includes access to advanced multi-tool automation recipes, exclusive 50% tool discounts, executive ROI exports, and the live status radar." }
   ]
 };
 

@@ -6,7 +6,10 @@ import { Footer } from "@/components/Footer";
 import { MouseFollower } from "@/components/MouseFollower";
 import { WaterBackground } from "@/components/WaterBackground";
 import { LoadingScreen } from "@/components/LoadingScreen";
+import { ProModal } from "@/components/ProModal";
+import { GeminiPlayground } from "@/components/GeminiPlayground";
 import { StackProvider } from "@/context/StackContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { SITE_CONFIG } from "@/lib/data";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -14,19 +17,17 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.siteUrl),
   title: {
-    default: "Circle | The AI Universe Directory",
+    default: "Circle | The AI Universe Directory & Workflows",
     template: "%s | Circle AI",
   },
   description: SITE_CONFIG.description,
   keywords: [
     "AI Tools",
+    "AI Workflows",
     "AI Directory",
     "Compare AI Tools",
-    "Open Source AI",
-    "ChatGPT",
-    "Midjourney",
-    "Cursor AI",
-    "Perplexity"
+    "AI ROI Calculator",
+    "Open Source AI"
   ],
   authors: [{ name: "Circle Team" }],
   creator: "Circle",
@@ -66,14 +67,18 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} min-h-screen mesh-gradient text-white overflow-x-hidden selection:bg-dark-accent selection:text-white`}>
-        <StackProvider>
-          <LoadingScreen />
-          <WaterBackground />
-          <MouseFollower />
-          <Navbar />
-          <main className="relative z-10">{children}</main>
-          <Footer />
-        </StackProvider>
+        <AuthProvider>
+          <StackProvider>
+            <LoadingScreen />
+            <WaterBackground />
+            <MouseFollower />
+            <Navbar />
+            <main className="relative z-10">{children}</main>
+            <Footer />
+            <ProModal />
+            <GeminiPlayground />
+          </StackProvider>
+        </AuthProvider>
       </body>
     </html>
   );

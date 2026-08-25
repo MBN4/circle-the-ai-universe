@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { GlassCard } from '@/components/GlassCard';
 import { Section } from '@/components/Section';
-import { AI_TOOLS, getToolBySlugOrId, AITool } from '@/lib/data';
+import { AI_TOOLS, getToolBySlugOrId } from '@/lib/data';
 import { cn } from '@/lib/utils';
 
 const ICON_MAP: Record<string, any> = {
@@ -145,7 +145,7 @@ function CustomSelect({
   );
 }
 
-function ComparePageContent() {
+function CompareContent() {
   const searchParams = useSearchParams();
   const [tool1Id, setTool1Id] = useState(searchParams.get('tool1') || '1');
   const [tool2Id, setTool2Id] = useState(searchParams.get('tool2') || '2');
@@ -338,8 +338,8 @@ function ComparePageContent() {
 
 export default function ComparePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen" />}>
-      <ComparePageContent />
+    <Suspense fallback={<div className="min-h-screen pt-40 text-center text-gray-400">Loading comparison tool...</div>}>
+      <CompareContent />
     </Suspense>
   );
 }
