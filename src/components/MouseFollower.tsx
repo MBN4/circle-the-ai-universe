@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useSpring } from 'motion/react';
+'use client';
+
+import React, { useEffect } from 'react';
+import { motion, useSpring } from 'framer-motion';
 
 export function MouseFollower() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  
   const springX = useSpring(0, { stiffness: 100, damping: 30 });
   const springY = useSpring(0, { stiffness: 100, damping: 30 });
 

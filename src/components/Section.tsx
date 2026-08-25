@@ -1,7 +1,15 @@
-import React from 'react';
-import { motion } from 'motion/react';
+'use client';
 
-export function Section({ children, className }: { children: React.ReactNode; className?: string }) {
+import React from 'react';
+import { motion } from 'framer-motion';
+
+export function Section({
+  children,
+  className
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 40 }}

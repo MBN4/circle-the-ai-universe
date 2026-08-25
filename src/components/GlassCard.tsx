@@ -1,6 +1,8 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { cn } from '../lib/utils';
+'use client';
+
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface GlassCardProps {
   children?: React.ReactNode;
@@ -8,8 +10,8 @@ interface GlassCardProps {
   tilt?: boolean;
 }
 
-export function GlassCard({ children, className, tilt = false, ...props }: GlassCardProps) {
-  const [rotate, setRotate] = React.useState({ x: 0, y: 0 });
+export function GlassCard({ children, className, tilt = false }: GlassCardProps) {
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!tilt) return;

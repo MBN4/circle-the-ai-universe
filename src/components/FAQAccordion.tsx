@@ -1,7 +1,9 @@
+'use client';
+
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface FAQItem {
   q: string;
@@ -19,15 +21,16 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
           className="glass dark:glass-dark rounded-2xl overflow-hidden h-fit"
         >
           <button
+            type="button"
             onClick={() => setOpenIndex(openIndex === index ? null : index)}
             className="w-full px-6 py-4 flex items-center justify-between text-left group"
           >
-            <span className="font-medium dark:text-white group-hover:text-dark-accent transition-colors">
+            <span className="font-medium text-white group-hover:text-dark-accent transition-colors">
               {item.q}
             </span>
             <ChevronDown
               className={cn(
-                "w-5 h-5 text-gray-400 transition-transform duration-300",
+                "w-5 h-5 text-gray-400 transition-transform duration-300 shrink-0 ml-2",
                 openIndex === index && "rotate-180"
               )}
             />
@@ -40,7 +43,7 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="px-6 pb-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                <div className="px-6 pb-4 text-gray-400 text-sm leading-relaxed">
                   {item.a}
                 </div>
               </motion.div>
