@@ -223,7 +223,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Wix ADI",
     category: "Web Builders",
     url: "https://wix.com",
-    desc: "Artificial Design Intelligence that builds a fully customized website tailored to your business.",
+    desc: "Artificial Design Intelligence that builds a unique website in minutes.",
     icon: "Globe",
     pricingType: "Freemium",
     hasApi: false,
@@ -239,7 +239,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Hostinger AI",
     category: "Web Builders",
     url: "https://hostinger.com",
-    desc: "Drag-and-drop website builder equipped with AI content generation, logo maker, and heatmap analyzer.",
+    desc: "Drag-and-drop builder with AI tools for content, logos, and heatmaps.",
     icon: "Layout",
     pricingType: "Paid",
     hasApi: false,
@@ -255,7 +255,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Durable",
     category: "Web Builders",
     url: "https://durable.co",
-    desc: "AI website builder for solo entrepreneurs that creates a complete business website in 30 seconds.",
+    desc: "AI website builder for solo entrepreneurs that creates a site in 30 seconds.",
     icon: "Zap",
     pricingType: "Freemium",
     hasApi: false,
@@ -271,7 +271,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Framer AI",
     category: "Web Builders",
     url: "https://framer.com",
-    desc: "Generate responsive, fluidly animated landing pages and sites from a single prompt.",
+    desc: "Generate entire websites from a single text prompt in seconds.",
     icon: "Layout",
     pricingType: "Freemium",
     hasApi: false,
@@ -290,7 +290,7 @@ export const AI_TOOLS: AITool[] = [
     name: "10Web",
     category: "Web Builders",
     url: "https://10web.io",
-    desc: "AI-powered WordPress platform for automated website creation, cloning, and hosting.",
+    desc: "AI-powered WordPress platform for automated website building and hosting.",
     icon: "Cloud",
     pricingType: "Paid",
     hasApi: false,
@@ -306,7 +306,7 @@ export const AI_TOOLS: AITool[] = [
     name: "SITE123",
     category: "Web Builders",
     url: "https://site123.com",
-    desc: "Simple and intuitive website builder with AI-assisted layout and structure generation.",
+    desc: "Simple and intuitive website builder with AI-assisted design and layout.",
     icon: "Globe",
     pricingType: "Freemium",
     hasApi: false,
@@ -322,7 +322,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Appy Pie",
     category: "Web Builders",
     url: "https://appypie.com",
-    desc: "No-code AI platform for building websites, mobile apps, and customer service chatbots.",
+    desc: "No-code AI platform for building websites, apps, and chatbots.",
     icon: "Smartphone",
     pricingType: "Freemium",
     hasApi: true,
@@ -338,7 +338,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Elementor AI",
     category: "Web Builders",
     url: "https://elementor.com",
-    desc: "AI-driven content, custom CSS, and code generation integrated into the Elementor builder.",
+    desc: "AI-driven content and code generation for WordPress website building.",
     icon: "Code",
     pricingType: "Paid",
     hasApi: false,
@@ -354,7 +354,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Squarespace AI",
     category: "Web Builders",
     url: "https://squarespace.com",
-    desc: "Smart templates and copy generation to help entrepreneurs launch professional sites quickly.",
+    desc: "Smart templates and copy generation to help you launch faster.",
     icon: "Layout",
     pricingType: "Paid",
     hasApi: false,
@@ -370,7 +370,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Dora AI",
     category: "Web Builders",
     url: "https://dora.run",
-    desc: "Generate 3D animated websites and interactive models from plain text prompts.",
+    desc: "Generate 3D animated websites from text prompts using AI.",
     icon: "Box",
     pricingType: "Freemium",
     hasApi: false,
@@ -389,7 +389,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Descript",
     category: "Video",
     url: "https://descript.com",
-    desc: "AI-powered video editor that makes editing video as simple as editing a text transcript.",
+    desc: "AI-powered video editor that makes editing as easy as editing text.",
     icon: "Video",
     pricingType: "Freemium",
     hasApi: false,
@@ -405,7 +405,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Synthesia",
     category: "Video",
     url: "https://synthesia.io",
-    desc: "Create professional AI avatar videos from script text in over 120 languages.",
+    desc: "Create professional AI avatar videos from text in minutes.",
     icon: "Users",
     pricingType: "Paid",
     hasApi: true,
@@ -421,7 +421,7 @@ export const AI_TOOLS: AITool[] = [
     name: "HeyGen",
     category: "Video",
     url: "https://heygen.com",
-    desc: "AI video generation for marketing and sales with photorealistic digital avatars and translation.",
+    desc: "AI video generation for marketing, sales, and training using avatars.",
     icon: "UserCircle",
     pricingType: "Freemium",
     hasApi: true,
@@ -437,7 +437,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Pictory",
     category: "Video",
     url: "https://pictory.ai",
-    desc: "Automatically extract short viral clips and reels from long webinars and podcasts.",
+    desc: "Automatically create short, highly shareable branded videos from long-form content.",
     icon: "Scissors",
     pricingType: "Paid",
     hasApi: false,
@@ -453,7 +453,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Lumen5",
     category: "Video",
     url: "https://lumen5.com",
-    desc: "AI video creator that turns blog posts and text articles into engaging marketing videos.",
+    desc: "AI video creator that turns blog posts and articles into engaging videos.",
     icon: "Zap",
     pricingType: "Freemium",
     hasApi: false,
@@ -469,7 +469,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Kapwing",
     category: "Video",
     url: "https://kapwing.com",
-    desc: "Cloud-based video editor with AI tools for automatic subtitling, silence removal, and resizing.",
+    desc: "Online video editor with AI tools for subtitles, background removal, and more.",
     icon: "Film",
     pricingType: "Freemium",
     hasApi: false,
@@ -485,7 +485,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Pika Labs",
     category: "Video",
     url: "https://pika.art",
-    desc: "Text-to-video and image-to-video generator for creating cinematic animations and effects.",
+    desc: "Text-to-video generator for creating animations and cinematic effects.",
     icon: "Sparkles",
     pricingType: "Freemium",
     hasApi: true,
@@ -504,7 +504,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Kaiber",
     category: "Video",
     url: "https://kaiber.ai",
-    desc: "Creative engine for generating artistic animated videos based on uploaded music and art.",
+    desc: "AI creative engine for generating videos based on your own photos and music.",
     icon: "Music",
     pricingType: "Paid",
     hasApi: false,
@@ -520,7 +520,7 @@ export const AI_TOOLS: AITool[] = [
     name: "Fliki",
     category: "Video",
     url: "https://fliki.ai",
-    desc: "Convert text into voiceover-powered videos with realistic AI voices in minutes.",
+    desc: "Turn text into videos with realistic AI voices in minutes.",
     icon: "Mic",
     pricingType: "Freemium",
     hasApi: true,
@@ -536,7 +536,7 @@ export const AI_TOOLS: AITool[] = [
     name: "InVideo AI",
     category: "Video",
     url: "https://invideo.io",
-    desc: "Generate complete scripted YouTube videos with narration, stock clips, and music from a prompt.",
+    desc: "A simple text-to-video tool that generates complete videos with voiceovers.",
     icon: "Video",
     pricingType: "Freemium",
     hasApi: false,
@@ -668,21 +668,108 @@ export const AI_TOOLS: AITool[] = [
 
 export const FAQS = {
   home: [
-    { q: "What is Circle?", a: "Circle is the premier directory for discovering, comparing, and submitting advanced AI software." },
-    { q: "Is it free to use?", a: "Yes, browsing the directory and saving your personal AI stack is completely free." },
-    { q: "How often is it updated?", a: "We add and verify new AI tools daily to ensure you have access to the latest models." },
-    { q: "Can I compare tools?", a: "Yes! Use the Compare feature to analyze pricing, APIs, pros and cons side by side." }
+    {
+      q: "What is Circle and what makes it unique?",
+      a: "Circle is a curated AI ecosystem directory where you can discover, benchmark, compare side-by-side, and save verified AI software with live community rankings."
+    },
+    {
+      q: "Is browsing Circle and saving tools free?",
+      a: "Yes, browsing our full catalog of 120+ AI tools, testing comparisons, and building your personal AI Stack is 100% free with no account required."
+    },
+    {
+      q: "How often is the AI directory updated?",
+      a: "Our editorial team and automated crawlers update tool profiles, verified URLs, pricing models, and public API statuses on a daily basis."
+    },
+    {
+      q: "How does the Side-by-Side Comparison feature work?",
+      a: "Navigate to the Compare tab to select any two AI tools and instantly analyze their pricing models, API availability, benchmark ratings, pros, and trade-offs."
+    },
+    {
+      q: "What is 'My AI Stack' and how do I use it?",
+      a: "Click the bookmark icon on any tool card to save it to your browser storage. You can access your personalized suite and share it via a custom link."
+    },
+    {
+      q: "Can I submit my own AI product or startup?",
+      a: "Yes! Use the Submit page to send your tool details. Our review team verifies all submissions within 24 to 48 hours."
+    }
   ],
   directory: [
-    { q: "How do I filter tools?", a: "Use the category tabs and pricing filters (Free, Freemium, Paid, Open Source) to find exact matches." },
-    { q: "Can I bookmark tools?", a: "Click the bookmark icon on any card to save it to your personal Stack." }
+    {
+      q: "How do I filter AI tools by pricing or open-source status?",
+      a: "Use the filter bar below the category pills to instantly narrow down software by Free, Freemium, Paid, Open Source, or API Available."
+    },
+    {
+      q: "Can I search by keyword or specific features?",
+      a: "Yes, our real-time search bar indexes tool titles, capability tags, supported models, and full descriptions instantly."
+    },
+    {
+      q: "Are all listed external links verified and safe?",
+      a: "Every tool link is manually audited to point strictly to official developer websites and registered domains."
+    },
+    {
+      q: "How are community upvotes calculated?",
+      a: "Users can upvote tools they use and love directly from the card. Upvote scores influence the Trending leaderboard on our home page."
+    },
+    {
+      q: "How do I compare a tool I found in the directory?",
+      a: "Click the scale/balance icon on any card in the directory to automatically load that tool into our side-by-side comparison engine."
+    },
+    {
+      q: "What if a listed tool changes its pricing or features?",
+      a: "You can submit an update request on our Submit page or notify our review team to correct any listing details."
+    }
   ],
   submit: [
-    { q: "What are the requirements?", a: "Tools must be functional, AI-driven, and provide clear value." },
-    { q: "How long does review take?", a: "Typically 24-48 hours for our team to review and verify your tool." }
+    {
+      q: "What are the eligibility criteria for listing a tool?",
+      a: "Your software must be functional, leverage machine learning or generative AI, and offer clear utility to end users or developers."
+    },
+    {
+      q: "How long does the review and verification process take?",
+      a: "Standard reviews are completed within 24 to 48 business hours. You will receive an email confirmation once listed."
+    },
+    {
+      q: "Is there any fee to submit an AI tool to Circle?",
+      a: "Basic listings and category indexing are completely free. Featured placement and spotlight badges are optional."
+    },
+    {
+      q: "Can I submit open-source AI models or GitHub repositories?",
+      a: "Yes! We actively support open-source projects. Select 'Open Source' as the pricing type during your submission."
+    },
+    {
+      q: "What information should I provide for the fastest approval?",
+      a: "Provide a working demo URL, a clear 2-sentence description of the core value proposition, key pros, and public API status."
+    },
+    {
+      q: "Can I edit my tool's description or prompts after publishing?",
+      a: "Yes, reach out via email with your tool name and the requested amendments, and our team will update the live listing."
+    }
   ],
   about: [
-    { q: "What is the roadmap?", a: "We are actively expanding AI comparisons, community upvotes, and custom prompt libraries." }
+    {
+      q: "What is the mission behind Circle?",
+      a: "Circle was built to democratize access to the rapidly accelerating AI universe by providing transparent, searchable, and unbiased tooling data."
+    },
+    {
+      q: "What is on the upcoming product roadmap?",
+      a: "Our upcoming milestones include community review threads, verified user performance benchmarks, automated price tracking, and an AI workflow generator."
+    },
+    {
+      q: "How does Circle ensure quality over quantity in listings?",
+      a: "We test tools before approval, filtering out non-functional wrappers and prioritizing apps that provide genuine value."
+    },
+    {
+      q: "Who is behind the development of Circle?",
+      a: "Circle is built and maintained by a dedicated team of engineers, designers, and AI researchers passionate about open-access technology."
+    },
+    {
+      q: "Can organizations partner or integrate with Circle?",
+      a: "Yes, we are open to partnerships with AI labs, developer platforms, and tooling directories. Contact us for partnership inquiries."
+    },
+    {
+      q: "Is the data accessible for developers?",
+      a: "We are developing a public API to enable developers to query categorized AI tool metadata and benchmark ratings directly."
+    }
   ]
 };
 

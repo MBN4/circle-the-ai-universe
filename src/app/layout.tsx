@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { MouseFollower } from "@/components/MouseFollower";
+import { WaterBackground } from "@/components/WaterBackground";
 import { LoadingScreen } from "@/components/LoadingScreen";
 import { StackProvider } from "@/context/StackContext";
 import { SITE_CONFIG } from "@/lib/data";
@@ -67,6 +68,7 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen mesh-gradient text-white overflow-x-hidden selection:bg-dark-accent selection:text-white`}>
         <StackProvider>
           <LoadingScreen />
+          <WaterBackground />
           <MouseFollower />
           <Navbar />
           <main className="relative z-10">{children}</main>

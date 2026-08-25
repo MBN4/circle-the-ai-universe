@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { Suspense, useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -145,7 +145,7 @@ function CustomSelect({
   );
 }
 
-export default function ComparePage() {
+function ComparePageContent() {
   const searchParams = useSearchParams();
   const [tool1Id, setTool1Id] = useState(searchParams.get('tool1') || '1');
   const [tool2Id, setTool2Id] = useState(searchParams.get('tool2') || '2');
@@ -333,5 +333,13 @@ export default function ComparePage() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function ComparePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen" />}>
+      <ComparePageContent />
+    </Suspense>
   );
 }
